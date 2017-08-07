@@ -3,107 +3,92 @@ import sys
 import scipy as sp
 from physicalconstants import *
 
-class NLevel_Evolve:
 
-    def __init__(self, Dens_i, Gamma, Decay_to, open_system="no"):
-        """
-        Functions for calculating the time evolution of an atomic system.
-        :param Dens_i: Initial density matrix.
-        :param Gamma: Decay matrix.  Diagonal elements are the total decay rates from each state.
-        :param Decay_to: Matrix whose elements are decay rates into a state from another state. For example,
-                         Decay_to[i, j] is the decay rate from state j to state i.
-        :param open_system: Is this an open system as in can atoms leave the system? Default is "no".
-        """
-        self.Dens_i = Dens_i
-        self.Gamma = Gamma
-        self.Decay_to = Decay_to
-        self.open_system = self.set_open(open_system)
+def set_open(value):
+    """
+    Set the control for whether the system evolves as an open or closed system. If open_system == "no" then the
+    repopulate method is included in the time evolution.
+    :param value: String saying whether the system is open or closed.  A value of "no" means closed, otherwise it's
+                  open.
+    :return: 1 for a closed system, 0 for an open system.
+    """
 
-        self.n = len(Gamma)  # Total number of states
+    if value == "no":
+        return 1
+    else:
+        return 0
 
-    def set_open(self, value):
-        """
-        Set the control for whether the system evolves as an open or closed system. If open_system == "no" then the
-        repopulate method is included in the time evolution.
-        :param value: String saying whether the system is open or closed.  A value of "no" means closed, otherwise it's
-                      open.
-        :return: 1 for a closed system, 0 for an open system.
-        """
+def commutator(M1, M2):
+    """
+    Calculates the commutator [M1, M2].
+    :param M1: First matrix.
+    :param M2: Second matrix.
+    :return: The commutator between M1 and M2 as a 2-D ndarray.
+    """
+    return sp.dot(M1, M2) - sp.dot(M2, M1)
 
-        if value == "no":
-            return 1
-        else:
-            return 0
+def anticommutator(M1, M2):
+    """
+    Calculates the anticommutator {M1, M2}.
+    :param M1: First matrix.
+    :param M2: Second matrix.
+    :return: The anticommutator between M1 and M2 as a 2-D ndarray.
+    """
+    return sp.dot(M1, M2) + sp.dot(M2, M1)
 
-    def commutator(self, M1, M2):
-        """
-        Calculates the commutator [M1, M2].
-        :param M1: First matrix.
-        :param M2: Second matrix.
-        :return: The commutator between M1 and M2 as a 2-D ndarray.
-        """
-        return sp.dot(M1, M2) - sp.dot(M2, M1)
+# def repopulate(rho):
+#     """
+#     Accounts for decaying population in a closed system. Repopulates the lower states.
+#     :param rho: Density matrix.
+#     :return: Matrix whose diagonal elements are the amount of population returned to each state through decay.
+#     """
+#     refill = sp.zeros(self.n, dtype=complex)
+#
+#     for j in range(self.n):
+#         gamma = self.Decay_to[:, j]
+#         decaying_state = sp.full((self.n, ), rho[j, j], dtype=complex)
+#         refill = refill + sp.multiply(gamma, decaying_state)
+#
+#     return sp.diag(refill)
 
-    def anticommutator(self, M1, M2):
-        """
-        Calculates the anticommutator {M1, M2}.
-        :param M1: First matrix.
-        :param M2: Second matrix.
-        :return: The anticommutator between M1 and M2 as a 2-D ndarray.
-        """
-        return sp.dot(M1, M2) + sp.dot(M2, M1)
+def rho_dot(Hamiltonian, Gamma, rho):
+    """
+    Calculate the time derivative of the density matrix using the quantum Liouville equation.
+    :param Hamiltonian: Hamiltonian.
+    :param Gamma: Decay matrix.
+    :param rho: density matrix.
+    :return: Time derivative of the density matrix as a 2-D ndarray (dtype=complex).
+    """
+    return -1j / hbar * commutator(Hamiltonian, rho) - 1 / 2 * anticommutator(Gamma, rho)  # + self.open_system * self.repopulate(rho)
 
-    def repopulate(self, rho):
-        """
-        Accounts for decaying population in a closed system. Repopulates the lower states.
-        :param rho: Density matrix.
-        :return: Matrix whose diagonal elements are the amount of population returned to each state through decay.
-        """
-        refill = sp.zeros(self.n, dtype=complex)
+def RK_rho(Hamiltonian, Gamma, rho, dt):
+    """
+    Calculates a single time step using the fourth order Runge-Kutta method.
+    :param Hamiltonian: Hamiltonian.
+    :param Gamma: Decay matrix.
+    :param rho: Density matrx.
+    :param dt: Time step.
+    :return: Density matrix after evolving for time dt as a 2-D ndarray (dtype=complex).
+    """
+    F1 = dt * rho_dot(Hamiltonian, Gamma, rho)
+    F2 = dt * rho_dot(Hamiltonian, Gamma, rho + 1. / 2 * F1)
+    F3 = dt * rho_dot(Hamiltonian, Gamma, rho + 1. / 2 * F2)
+    F4 = dt * rho_dot(Hamiltonian, Gamma, rho + F3)
+    return rho + 1. / 6 * (F1 + 2 * F2 + 2 * F3 + F4)
 
-        for j in range(self.n):
-            gamma = self.Decay_to[:, j]
-            decaying_state = sp.full((self.n, ), rho[j, j], dtype=complex)
-            refill = refill + sp.multiply(gamma, decaying_state)
-
-        return sp.diag(refill)
-
-    def rho_dot(self, Hamiltonian, rho):
-        """
-        Calculate the time derivative of the density matrix using the quantum Liouville equation.
-        :param Hamiltonian: Hamiltonian.
-        :param rho: density matrix.
-        :return: Time derivative of the density matrix as a 2-D ndarray (dtype=complex).
-        """
-        return -1j / hbar * self.commutator(Hamiltonian, rho) - 1 / 2 * self.anticommutator(self.Gamma, rho) + self.open_system * self.repopulate(rho)
-
-    def RK_rho(self, Hamiltonian, rho, dt):
-        """
-        Calculates a single time step using the fourth order Runge-Kutta method.
-        :param Hamiltonian: Hamiltonian.
-        :param rho: Density matrx.
-        :param dt: Time step.
-        :return: Density matrix after evolving for time dt as a 2-D ndarray (dtype=complex).
-        """
-        F1 = dt * self.rho_dot(Hamiltonian, rho)
-        F2 = dt * self.rho_dot(Hamiltonian, rho + 1. / 2 * F1)
-        F3 = dt * self.rho_dot(Hamiltonian, rho + 1. / 2 * F2)
-        F4 = dt * self.rho_dot(Hamiltonian, rho + F3)
-        return rho + 1. / 6 * (F1 + 2 * F2 + 2 * F3 + F4)
-
-    def time_evolve(self, Hamiltonian, dt, nt):
-        """
-        Perform multiple time step evolutions starting with the initial density matrix self.Dens_i.
-        :param Hamiltonian: Hamiltonian.
-        :param dt: Time step.
-        :param nt: Number of time steps.
-        :return: Density matrix after evolving for many time steps as a 2-D ndarray (dtype=complex).
-        """
-        rho = self.Dens_i
-        for i in range(nt):
-            temp = self.RK_rho(Hamiltonian(i * dt), rho, dt)
-            rho = temp
-        return rho
+# def time_evolve(Hamiltonian, Gamma, dt, nt):
+#     """
+#     Perform multiple time step evolutions starting with the initial density matrix self.Dens_i.
+#     :param Hamiltonian: Hamiltonian.
+#     :param dt: Time step.
+#     :param nt: Number of time steps.
+#     :return: Density matrix after evolving for many time steps as a 2-D ndarray (dtype=complex).
+#     """
+#     rho = Dens_i
+#     for i in range(nt):
+#         temp = RK_rho(Hamiltonian(i * dt), Gamma, rho, dt)
+#         rho = temp
+#     return rho
 
 class AL_interaction(object):
 
