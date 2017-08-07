@@ -5,8 +5,6 @@ from physicalconstants import *
 
 class NLevel_Evolve:
 
-    version = 1
-
     def __init__(self, Dens_i, Gamma, Decay_to, open_system="no"):
         """
         Functions for calculating the time evolution of an atomic system.
