@@ -5,7 +5,7 @@ from physicalconstants import *
 
 class NLevel_Evolve:
 
-    version = 1
+    version = 10
 
     def __init__(self, Dens_i, Gamma, Decay_to, open_system="no"):
         """
