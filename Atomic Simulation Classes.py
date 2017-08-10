@@ -126,3 +126,18 @@ class simulation:
             time_dep_state[int(i / self.dt), :, :] = self.system.evolve_step(self.evolver(i * self.dt), self.dt).copy()
 
         return time_dep_state
+
+    def susceptibility(self, lasers, detunings):
+        """
+
+        :param lasers: List of n_l hamiltonian_construct objects where n_l is the number of lasers interacting with the
+                       system.
+        :param detunings:
+        :return:
+        """
+        dim = sp.shape(lasers[0].freq)
+        for i in detunings[0]:
+            for j in lasers[:]:  # Shift the frequency of each laser Hamiltonian
+                detune_mask = sp.zeros(dim)  # Set / reset mask
+                detune_mask[j.freq != 0] = 1  # Select only nonzero matrix elements of the Hamiltonian
+                j.freq = j.freq + detune_mask * detunings[lasers.index(j), detunings.index(i)]
