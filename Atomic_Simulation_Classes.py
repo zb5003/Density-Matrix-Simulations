@@ -89,10 +89,11 @@ class simulation:
         """
         self.system = system
         self.evolver = evolver
+        self.evolver_default = evolver
         self.nt = nt
         self.dt = dt
 
-    def reset_system(self):
+    def reset_state(self):
         """
         Return the system to its original state.
         :return: None.
@@ -100,14 +101,22 @@ class simulation:
         self.system.current_state = self.system.initial_state
         return None
 
+    def reset_detuning(self):
+        """
+        Reset the frequencies of the beams (probably after a susceptibility simulation).
+        :return: None.
+        """
+        self.evolver = self.evolver_default
+        return None
+
     def final_state(self):
         """
         Calculate the state of the system after nt timesteps of size dt.
         :return: The final state of the system (matrix).
         """
-        times = sp.linspace(0, self.nt * self.dt, self.nt)
+        times = sp.linspace(0, self.nt * self.dt, self.nt, endpoint=False)
         for i in times:
-            self.system.evolve_step(self.evolver(i * self.dt), self.dt)
+            self.system.evolve_step(self.evolver(i * int(i / self.dt)), self.dt)
 
         return self.system.current_state
 
@@ -117,13 +126,13 @@ class simulation:
         :return: The state at ever timestep of the simulation.
         """
 
-        row = sp.shape(self.system.inital_state)[0]
-        column = sp.shape(self.system.inital_state)[0]
-        times = sp.linspace(0, self.nt * self.dt, self.nt)
+        row = sp.shape(self.system.initial_state)[0]
+        column = sp.shape(self.system.initial_state)[0]
+        times = sp.linspace(0, self.nt * self.dt, self.nt, endpoint=False)
         time_dep_state = sp.zeros((self.nt, row, column), dtype=complex)
 
         for i in times:
-            time_dep_state[int(i / self.dt), :, :] = self.system.evolve_step(self.evolver(i * self.dt), self.dt).copy()
+            time_dep_state[int(i / self.dt)] = self.system.evolve_step(self.evolver(i * int(i / self.dt)), self.dt).copy()
 
         return time_dep_state
 
@@ -136,8 +145,13 @@ class simulation:
         :return:
         """
         dim = sp.shape(lasers[0].freq)
-        for i in detunings[0]:
-            for j in lasers[:]:  # Shift the frequency of each laser Hamiltonian
+        chi = sp.zeros((sp.shape(detunings)[0], dim[0], dim[1]), dtype=complex)
+        for i in range(len(detunings)):
+            for j in lasers:  # Shift the frequency of each laser Hamiltonian
                 detune_mask = sp.zeros(dim)  # Set / reset mask
                 detune_mask[j.freq != 0] = 1  # Select only nonzero matrix elements of the Hamiltonian
-                j.freq = j.freq + detune_mask * detunings[lasers.index(j), detunings.index(i)]
+                j.freq = j.freq + detune_mask * detunings[i]
+            self.evolver = lambda t: sum([k.hamiltonian(t) for k in lasers])
+            chi[i] = self.final_state()
+
+        return chi
