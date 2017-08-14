@@ -65,7 +65,7 @@ class hamiltonian_construct:
         :param t: Time.
         :return: Relative field amplitude at time t.
         """
-        return 1 / (1 + sp.exp(-(t - hamiltonian_construct.tau_naught) / hamiltonian_construct.tau))
+        return 1  #1 / (1 + sp.exp(-(t - hamiltonian_construct.tau_naught) / hamiltonian_construct.tau))
 
     def hamiltonian(self, t):
         """
@@ -116,7 +116,7 @@ class simulation:
         """
         times = sp.linspace(0, self.nt * self.dt, self.nt, endpoint=False)
         for i in times:
-            self.system.evolve_step(self.evolver(i * int(i / self.dt)), self.dt)
+            self.system.evolve_step(self.evolver(i), self.dt)
 
         return self.system.current_state
 
@@ -132,7 +132,7 @@ class simulation:
         time_dep_state = sp.zeros((self.nt, row, column), dtype=complex)
 
         for i in times:
-            time_dep_state[int(i / self.dt)] = self.system.evolve_step(self.evolver(i * int(i / self.dt)), self.dt).copy()
+            time_dep_state[int(i / self.dt)] = self.system.evolve_step(self.evolver(i), self.dt).copy()
 
         return time_dep_state
 

@@ -2,6 +2,7 @@
 All units are in SI.
 """
 import scipy as sp
+import time
 import matplotlib.pyplot as plt
 from Atomic_Simulation_Classes import *
 from physicalconstants import *
@@ -19,14 +20,14 @@ intensity = power / (2 * sp.pi * waist**2)
 field_amplitude = sp.sqrt(2 * intensity / (n * epsilon0 * c))
 
 # Interaction parameters
-detuning = gamma / 5
+detuning = 0 * gamma / 2
 frequencies = sp.asarray([[0, detuning], [-detuning, 0]])
 detunings = sp.linspace(-1 / 5 * gamma, 1 / 5 * gamma, 100)
 dipole_operator = a0 * e_charge * sp.asarray([[0, 1], [1, 0]])
 
 # Simulation parameters
 dt = 1e-9
-nt = 2000
+nt = 1000
 the_times = sp.linspace(0, nt * dt, nt, endpoint=False)
 print(a0 * e_charge / hbar, field_amplitude, field_amplitude * a0 * e_charge / hbar, 1 / (field_amplitude * a0 * e_charge / hbar) * 1e6)
 
@@ -36,8 +37,10 @@ the_hamiltonian = hamiltonian_construct(dipole_operator, field_amplitude, freque
 the_simulation = simulation(the_atom, the_hamiltonian.hamiltonian, nt, dt)
 
 # Run the simulation
+t1 = time.time()
 # the_flop = the_simulation.time_evolution()
 the_susceptibility = the_simulation.susceptibility([the_hamiltonian], detunings)
+print("Time elapsed = " + str(round(time.time() - t1, 4)) + " seconds")
 
 # Plot dat shit
 # fig, ax = plt.subplots(nrows=2, ncols=1)
