@@ -117,8 +117,10 @@ class simulation:
         times = sp.linspace(0, self.nt * self.dt, self.nt, endpoint=False)
         for i in times:
             self.system.evolve_step(self.evolver(i), self.dt)
+        a = self.system.current_state.copy()
+        # print(a)
 
-        return self.system.current_state
+        return a
 
     def time_evolution(self):
         """
@@ -144,14 +146,17 @@ class simulation:
         :param detunings:
         :return:
         """
-        dim = sp.shape(lasers[0].freq)
-        chi = sp.zeros((sp.shape(detunings)[0], dim[0], dim[1]), dtype=complex)
+        dim = sp.shape(lasers.freq)
+        chi = sp.zeros((len(detunings), dim[0], dim[1]), dtype=complex)
         for i in range(len(detunings)):
-            for j in lasers:  # Shift the frequency of each laser Hamiltonian
-                detune_mask = sp.zeros(dim)  # Set / reset mask
-                detune_mask[j.freq != 0] = 1  # Select only nonzero matrix elements of the Hamiltonian
-                j.freq = j.freq + detune_mask * detunings[i]
-            self.evolver = lambda t: sum([k.hamiltonian(t) for k in lasers])
+            # for j in lasers:  # Shift the frequency of each laser Hamiltonian
+            detune_mask = sp.zeros(dim)  # Set / reset mask
+            # detune_mask[j.freq != 0] = 1  # Select only nonzero matrix elements of the Hamiltonian
+            detune_mask[1, 0] = -1
+            detune_mask[0, 1] = 1
+            lasers.freq = detune_mask * detunings[i]
+            print(lasers.freq)
+            # self.evolver = lambda t: sum([k.hamiltonian(t) for k in lasers])
             chi[i] = self.final_state()
 
         return chi
