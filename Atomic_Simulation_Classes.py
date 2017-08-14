@@ -78,20 +78,21 @@ class hamiltonian_construct:
 
 class simulation:
 
-    def __init__(self, system, evolver, nt, dt):
+    def __init__(self, system, ham_obj, nt, dt):
         """
         Create an instance of a simulation that calculates the time evolution of a single atom interacting
         with lasers at fixed frequencies.
         :param system: An instance of the class atom.
-        :param evolver: The method hamiltonian from the class hamiltonian_construct.
+        :param ham_obj: An instance of the class hamiltonian_construct.
         :param nt: Number of time steps in the simulation.
         :param dt: Time step.
         """
         self.system = system
-        self.evolver = evolver
-        self.evolver_default = evolver
+        self.ham_obj = ham_obj
         self.nt = nt
         self.dt = dt
+
+        self.freq_default = ham_obj.freq.copy()
 
     def reset_state(self):
         """
@@ -106,7 +107,7 @@ class simulation:
         Reset the frequencies of the beams (probably after a susceptibility simulation).
         :return: None.
         """
-        self.evolver = self.evolver_default
+        self.ham_obj.freq = self.freq_default.copy()
         return None
 
     def final_state(self):
@@ -116,11 +117,10 @@ class simulation:
         """
         times = sp.linspace(0, self.nt * self.dt, self.nt, endpoint=False)
         for i in times:
-            self.system.evolve_step(self.evolver(i), self.dt)
-        a = self.system.current_state.copy()
-        # print(a)
+            self.system.evolve_step(self.ham_obj.hamiltonian(i), self.dt)
+        final_untrans = self.system.current_state * sp.exp(-1j * self.ham_obj.freq * (self.nt - 1) * self.dt)
 
-        return a
+        return final_untrans
 
     def time_evolution(self):
         """
@@ -134,7 +134,8 @@ class simulation:
         time_dep_state = sp.zeros((self.nt, row, column), dtype=complex)
 
         for i in times:
-            time_dep_state[int(i / self.dt)] = self.system.evolve_step(self.evolver(i), self.dt).copy()
+            time_dep_state[int(i / self.dt)] = self.system.evolve_step(self.ham_obj.hamiltonian(i), self.dt).copy() * \
+                                               sp.exp(-1j * self.ham_obj.freq * i)
 
         return time_dep_state
 
@@ -155,8 +156,8 @@ class simulation:
             detune_mask[1, 0] = -1
             detune_mask[0, 1] = 1
             lasers.freq = detune_mask * detunings[i]
-            print(lasers.freq)
             # self.evolver = lambda t: sum([k.hamiltonian(t) for k in lasers])
             chi[i] = self.final_state()
+            self.reset_state()
 
         return chi

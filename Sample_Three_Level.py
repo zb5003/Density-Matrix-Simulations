@@ -22,19 +22,19 @@ field_amplitude = sp.sqrt(2 * intensity / (n * epsilon0 * c))
 # Interaction parameters
 detuning = 0 * gamma
 frequencies = sp.asarray([[0, detuning], [-detuning, 0]])
-detunings = sp.linspace(-gamma, gamma, 40)
+detunings = sp.linspace(-10 * gamma, 10 * gamma, 100)
 dipole_operator = a0 * e_charge * sp.asarray([[0, 1], [1, 0]])
 
 # Simulation parameters
 dt = 1e-9
 nt = 2000
 the_times = sp.linspace(0, nt * dt, nt, endpoint=False)
-print(a0 * e_charge / hbar, field_amplitude, field_amplitude * a0 * e_charge / hbar, 1 / (field_amplitude * a0 * e_charge / hbar) * 1e6)
+print(field_amplitude * a0 * e_charge / hbar, 1 / (field_amplitude * a0 * e_charge / (2 * sp.pi * hbar)) * 1e6)
 
 # Objects
 the_atom = atom(initial_state, decay_matrix)
 the_hamiltonian = hamiltonian_construct(dipole_operator, field_amplitude, frequencies)
-the_simulation = simulation(the_atom, the_hamiltonian.hamiltonian, nt, dt)
+the_simulation = simulation(the_atom, the_hamiltonian, nt, dt)
 
 # Run the simulation
 t1 = time.time()
@@ -51,7 +51,6 @@ print("Time elapsed = " + str(round(time.time() - t1, 4)) + " seconds")
 # ax[1].plot(the_times * 1e6, the_flop[:, 0, 1].real, label=r"$\Re[\rho_{12}]$")
 # ax[1].plot(the_times * 1e6, the_flop[:, 0, 1].imag, label=r"$\Im[\rho_{12}]$")
 # ax[1].legend()
-
 
 fig, ax = plt.subplots(nrows=1, ncols=1)
 ax.plot(detunings / 1e6, the_susceptibility[:, 0, 1].real, label=r"$\Re[\chi]$")
