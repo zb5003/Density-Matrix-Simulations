@@ -83,7 +83,7 @@ class simulation:
         Create an instance of a simulation that calculates the time evolution of a single atom interacting
         with lasers at fixed frequencies.
         :param system: An instance of the class atom.
-        :param ham_obj: An instance of the class hamiltonian_construct.
+        :param ham_obj: A list of instances of the class hamiltonian_construct.
         :param nt: Number of time steps in the simulation.
         :param dt: Time step.
         """
@@ -92,7 +92,8 @@ class simulation:
         self.nt = nt
         self.dt = dt
 
-        self.freq_default = ham_obj.freq.copy()
+        self.evolver = lambda t: sum([k.hamiltonian(t) for k in ham_obj])
+        self.freq_default = ham_obj[0].freq.copy()
 
     def reset_state(self):
         """
@@ -107,7 +108,7 @@ class simulation:
         Reset the frequencies of the beams (probably after a susceptibility simulation).
         :return: None.
         """
-        self.ham_obj.freq = self.freq_default.copy()
+        self.ham_obj[0].freq = self.freq_default.copy()
         return None
 
     def final_state(self):
@@ -117,8 +118,8 @@ class simulation:
         """
         times = sp.linspace(0, self.nt * self.dt, self.nt, endpoint=False)
         for i in times:
-            self.system.evolve_step(self.ham_obj.hamiltonian(i), self.dt)
-        final_untrans = self.system.current_state * sp.exp(-1j * self.ham_obj.freq * (self.nt - 1) * self.dt)
+            self.system.evolve_step(self.evolver(i), self.dt)
+        final_untrans = self.system.current_state * sp.exp(-1j * self.ham_obj[0].freq * (self.nt - 1) * self.dt)
 
         return final_untrans
 
@@ -134,30 +135,32 @@ class simulation:
         time_dep_state = sp.zeros((self.nt, row, column), dtype=complex)
 
         for i in times:
-            time_dep_state[int(i / self.dt)] = self.system.evolve_step(self.ham_obj.hamiltonian(i), self.dt).copy() * \
-                                               sp.exp(-1j * self.ham_obj.freq * i)
+            time_dep_state[int(i / self.dt)] = self.system.evolve_step(self.evolver(i), self.dt).copy() * \
+                                               sp.exp(-1j * self.ham_obj[0].freq * i)
 
         return time_dep_state
 
-    def susceptibility(self, lasers, detunings):
+    def susceptibility(self, detunings):
         """
-
+        Calculate the susceptibility curve for a given system interacting with an arbitrary number of lasers,
+        potentially each with different dipole moments.
+        
+        Note that the susceptibility is defined for a single frequency.
         :param lasers: List of n_l hamiltonian_construct objects where n_l is the number of lasers interacting with the
                        system.
         :param detunings:
         :return:
         """
-        dim = sp.shape(lasers.freq)
+        dim = sp.shape(self.system.initial_state)
         chi = sp.zeros((len(detunings), dim[0], dim[1]), dtype=complex)
         for i in range(len(detunings)):
-            # for j in lasers:  # Shift the frequency of each laser Hamiltonian
             detune_mask = sp.zeros(dim)  # Set / reset mask
             # detune_mask[j.freq != 0] = 1  # Select only nonzero matrix elements of the Hamiltonian
-            detune_mask[1, 0] = -1
-            detune_mask[0, 1] = 1
-            lasers.freq = detune_mask * detunings[i]
-            # self.evolver = lambda t: sum([k.hamiltonian(t) for k in lasers])
+            detune_mask[2, 0] = -1
+            detune_mask[0, 2] = 1
+            self.ham_obj[0].freq = detune_mask * detunings[i]
             chi[i] = self.final_state()
             self.reset_state()
+        self.reset_detuning()
 
         return chi
