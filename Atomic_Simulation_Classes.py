@@ -84,6 +84,8 @@ class simulation:
         with lasers at fixed frequencies.
         :param system: An instance of the class atom.
         :param ham_obj: A list of instances of the class hamiltonian_construct.
+                        IMPORTANT: The first element of this list will be the laser that is
+                                   swept for the susceptibility plot.
         :param nt: Number of time steps in the simulation.
         :param dt: Time step.
         """
@@ -146,21 +148,21 @@ class simulation:
         potentially each with different dipole moments.
         
         Note that the susceptibility is defined for a single frequency.
-        :param lasers: List of n_l hamiltonian_construct objects where n_l is the number of lasers interacting with the
-                       system.
-        :param detunings:
-        :return:
+        :param detunings:  The detunings to sweep through for the susceptibility plot.
+        :return: The susceptibility plot.
         """
         dim = sp.shape(self.system.initial_state)
         chi = sp.zeros((len(detunings), dim[0], dim[1]), dtype=complex)
+
+        detune_mask = sp.zeros(dim)  # Set / reset mask
+        detune_mask[self.ham_obj[0].dipoles != 0] = 1  # Select only nonzero matrix elements of the Hamiltonian
+        detune_mask = sp.triu(detune_mask) - sp.tril(detune_mask)
+
         for i in range(len(detunings)):
-            detune_mask = sp.zeros(dim)  # Set / reset mask
-            # detune_mask[j.freq != 0] = 1  # Select only nonzero matrix elements of the Hamiltonian
-            detune_mask[2, 0] = -1
-            detune_mask[0, 2] = 1
             self.ham_obj[0].freq = detune_mask * detunings[i]
             chi[i] = self.final_state()
             self.reset_state()
+
         self.reset_detuning()
 
         return chi
