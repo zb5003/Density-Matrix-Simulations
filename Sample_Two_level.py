@@ -12,6 +12,7 @@ n = 1.8
 initial_state = sp.asarray([[1, 0], [0, 0]], dtype=complex)
 gamma = 2 * sp.pi * 1e6
 decay_matrix = sp.asarray([[0, 0], [0, gamma]])
+decay_to = sp.asarray([[0, sp.sqrt(gamma)], [0, 0]])
 
 # Beam parameters
 power_p = 0.01
@@ -36,7 +37,7 @@ nt = 3000
 the_times = sp.linspace(0, nt * dt, nt, endpoint=False)
 
 # Objects
-the_atom = atom(initial_state, decay_matrix)
+the_atom = atom(initial_state, decay_matrix, decay_to)
 the_hamiltonian_p = hamiltonian_construct(dipole_operator_p, field_amplitude_p, frequencies_p)
 the_simulation = simulation(the_atom, [the_hamiltonian_p], nt, dt)
 

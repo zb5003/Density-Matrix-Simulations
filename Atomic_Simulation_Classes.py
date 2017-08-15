@@ -2,7 +2,7 @@ from nlevel import *
 
 class atom:
 
-    def __init__(self, state, decay):
+    def __init__(self, state, decay, closed):
         """
         Create an atom instance with initial state 'state' whose levels decay according to the 
         matrix decay.
@@ -10,10 +10,14 @@ class atom:
                       save the initial state (self.initial_state) and one to update as the
                       atom evolves (self.current_state).
         :param decay: Matrix describing the decay of the system.
+        :param closed: Array detailing the decay rate from each excited state to each ground state.
+                       This array is used to add population back into the system, thus making it closed.
+                       The elements of the array should be the square roots of the decay rates.
         """
         self.initial_state = state
         self.current_state = state
         self.decay = decay
+        self.closed = closed
 
     def evolve_step(self, hamiltonian, dt):
         """
@@ -24,7 +28,7 @@ class atom:
         :param dt: Time step over which to prefomr the time evolution.
         :return: The time-evolved state.
         """
-        self.current_state = RK_rho(hamiltonian, self.decay, self.current_state, dt)
+        self.current_state = RK_rho(hamiltonian, self.decay, self.current_state, self.closed, dt)
         return self.current_state
 
 class hamiltonian_construct:
@@ -137,7 +141,7 @@ class simulation:
         time_dep_state = sp.zeros((self.nt, row, column), dtype=complex)
 
         for i in times:
-            time_dep_state[int(i / self.dt)] = self.system.evolve_step(self.evolver(i), self.dt).copy() * \
+            time_dep_state[sp.where(times == i)] = self.system.evolve_step(self.evolver(i), self.dt).copy() * \
                                                sp.exp(-1j * self.ham_obj[0].freq * i)
 
         return time_dep_state

@@ -11,20 +11,30 @@ from physicalconstants import *
 n = 1.8
 lower_spacing = sp.asarray([148 * 10**6, 76.4 * 10**6], dtype=sp.float64)
 upper_spacing = sp.asarray([183 * 10**6, 114 * 10**6], dtype=sp.float64)
-initial_state = sp.asarray([[1 / 3, 0, 0, 0, 0, 0],
-                            [0, 1 / 3, 0, 0, 0, 0],
-                            [0, 0, 1 / 3, 0, 0, 0],
-                            [0, 0, 0, 0, 0, 0],
-                            [0, 0, 0, 0, 0, 0],
-                            [0, 0, 0, 0, 0, 0]], dtype=complex)
+initial_state = sp.asarray([[1 / 3, 0, 0, 0, 0, 0, 0],
+                            [0, 1 / 3, 0, 0, 0, 0, 0],
+                            [0, 0, 1 / 3, 0, 0, 0, 0],
+                            [0, 0, 0, 0, 0, 0, 0],
+                            [0, 0, 0, 0, 0, 0, 0],
+                            [0, 0, 0, 0, 0, 0, 0],
+                            [0, 0, 0, 0, 0, 0, 0]], dtype=complex)
 
 gamma = 2 * sp.pi * 4800
-decay_matrix = sp.asarray([[0, 0, 0, 0, 0, 0],
-                           [0, 0, 0, 0, 0, 0],
-                           [0, 0, 0, 0, 0, 0],
-                           [0, 0, 0, gamma, 0, 0],
-                           [0, 0, 0, 0, gamma, 0],
-                           [0, 0, 0, 0, 0, gamma]])
+gamma_slow = 2 * sp.pi * 500
+decay_matrix = sp.asarray([[0, 0, 0, 0, 0, 0, 0],
+                           [0, 0, 0, 0, 0, 0, 0],
+                           [0, 0, 0, 0, 0, 0, 0],
+                           [0, 0, 0, gamma_slow, 0, 0, 0],
+                           [0, 0, 0, 0, gamma, 0, 0],
+                           [0, 0, 0, 0, 0, gamma, 0],
+                           [0, 0, 0, 0, 0, 0, gamma]])
+decay_to = sp.asarray([[0, 0, 0, sp.sqrt(gamma_slow / 3), 0, 0, 0],
+                       [0, 0, 0, sp.sqrt(gamma_slow / 3), 0, 0, 0],
+                       [0, 0, 0, sp.sqrt(gamma_slow / 3), 0, 0, 0],
+                       [0, 0, 0, 0, sp.sqrt(gamma), sp.sqrt(gamma), sp.sqrt(gamma)],
+                       [0, 0, 0, 0, 0, 0, 0],
+                       [0, 0, 0, 0, 0, 0, 0],
+                       [0, 0, 0, 0, 0, 0, 0]])
 
 # Beam parameters _______________________________
 power_p = 277e-3
@@ -44,26 +54,28 @@ detuning = 0
 frequencies_intermediate = sp.asarray([[detuning, detuning + upper_spacing[0], detuning + sum(upper_spacing)],
                             [detuning - lower_spacing[0], detuning + upper_spacing[0] - lower_spacing[0], detuning + sum(upper_spacing) - lower_spacing[0]],
                             [detuning - sum(lower_spacing), detuning + upper_spacing[0] - sum(lower_spacing), detuning + sum(upper_spacing) - sum(lower_spacing)]])
-frequencies_p = sp.vstack((sp.hstack((sp.zeros((3, 3)), frequencies_intermediate)), sp.hstack((-frequencies_intermediate, sp.zeros((3, 3))))))
+
+frequencies_p = sp.vstack((sp.hstack((sp.zeros((4, 4)), sp.vstack((frequencies_intermediate, sp.zeros(3))))), sp.hstack((-frequencies_intermediate, sp.zeros((3, 4))))))
 
 detunings_p = sp.linspace(-10 * gamma, 10 * gamma, 100)
-dipole_operator_p = 0.063 * muB * sp.asarray([[0, 0, 0, sp.sqrt(0.03), sp.sqrt(0.22), sp.sqrt(0.75)],
-                                              [0, 0, 0, sp.sqrt(0.12), sp.sqrt(0.68), sp.sqrt(0.2)],
-                                              [0, 0, 0, sp.sqrt(0.85), sp.sqrt(0.1), sp.sqrt(0.05)],
-                                              [sp.sqrt(0.03), sp.sqrt(0.12), sp.sqrt(0.85), 0, 0, 0],
-                                              [sp.sqrt(0.22), sp.sqrt(0.68), sp.sqrt(0.10), 0, 0, 0],
-                                              [sp.sqrt(0.75), sp.sqrt(0.2), sp.sqrt(0.05), 0, 0, 0]])
+dipole_operator_p = 0.063 * muB * sp.asarray([[0, 0, 0, 0, sp.sqrt(0.03), sp.sqrt(0.22), sp.sqrt(0.75)],
+                                              [0, 0, 0, 0, sp.sqrt(0.12), sp.sqrt(0.68), sp.sqrt(0.2)],
+                                              [0, 0, 0, 0, sp.sqrt(0.85), sp.sqrt(0.1), sp.sqrt(0.05)],
+                                              [0, 0, 0, 0, 0, 0, 0],
+                                              [sp.sqrt(0.03), sp.sqrt(0.12), sp.sqrt(0.85), 0, 0, 0, 0],
+                                              [sp.sqrt(0.22), sp.sqrt(0.68), sp.sqrt(0.10), 0, 0, 0, 0],
+                                              [sp.sqrt(0.75), sp.sqrt(0.2), sp.sqrt(0.05), 0, 0, 0, 0]])
 
 # frequencies_c = sp.asarray([[0, 0, 0], [0, 0, 0], [0, 0, 0]])
 # dipole_operator_c = a0 * e_charge * sp.asarray([[0, 0, 0], [0, 0, 1], [0, 1, 0]])
 
 # Simulation parameters _________________________
 dt = 1e-9
-nt = 30000
+nt = 3000000
 the_times = sp.linspace(0, nt * dt, nt, endpoint=False)
 
 # Objects _____________________________________________________________________
-the_atom = atom(initial_state, decay_matrix)
+the_atom = atom(initial_state, decay_matrix, decay_to)
 the_hamiltonian_p = hamiltonian_construct(dipole_operator_p, field_amplitude_p, frequencies_p)
 # the_hamiltonian_c = hamiltonian_construct(dipole_operator_c, field_amplitude_c, frequencies_c)
 the_simulation = simulation(the_atom, [the_hamiltonian_p], nt, dt)
@@ -80,9 +92,12 @@ ax[0].plot(the_times * 1e6, abs(the_flop[:, 0, 0]), label=r"$\rho_{11}$")
 ax[0].plot(the_times * 1e6, abs(the_flop[:, 3, 3]), label=r"$\rho_{44}$")
 ax[0].legend()
 
-ax[1].plot(the_times * 1e6, the_flop[:, 0, 3].real, label=r"$\Re[\rho_{14}]$")
-ax[1].plot(the_times * 1e6, the_flop[:, 0, 3].imag, label=r"$\Im[\rho_{14}]$")
+ax[1].plot(the_times * 1e6, abs(the_flop[:, 1, 1]), label=r"$\rho_{22}$")
+ax[1].plot(the_times * 1e6, abs(the_flop[:, 2, 2]), label=r"$\rho_{33}$")
 ax[1].legend()
+# ax[1].plot(the_times * 1e6, the_flop[:, 0, 4].real, label=r"$\Re[\rho_{14}]$")
+# ax[1].plot(the_times * 1e6, the_flop[:, 0, 4].imag, label=r"$\Im[\rho_{14}]$")
+# ax[1].legend()
 
 # fig, ax = plt.subplots(nrows=1, ncols=1)
 # ax.plot(detunings_p / 1e6, the_susceptibility[:, 0, 2].real, label=r"$\Re[\chi]$")
