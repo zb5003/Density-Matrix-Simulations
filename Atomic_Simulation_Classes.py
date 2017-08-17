@@ -80,7 +80,7 @@ class hamiltonian_construct:
         """
         return self.envelope(t) * self.carrier(t)
 
-class simulation:
+class single_atom_simulation:
 
     def __init__(self, system, ham_obj, nt, dt):
         """
@@ -100,6 +100,16 @@ class simulation:
 
         self.evolver = lambda t: sum([k.hamiltonian(t) for k in ham_obj])
         self.freq_default = ham_obj[0].freq.copy()
+        self.mask = self.generate_mask()
+
+    def generate_mask(self):
+        """
+
+        :return:
+        """
+        detune_mask = sp.zeros(sp.shape(self.system.initial_state))  # Set / reset mask
+        detune_mask[self.ham_obj[0].dipoles != 0] = 1  # Select only nonzero matrix elements of the Hamiltonian
+        return sp.triu(detune_mask) - sp.tril(detune_mask)
 
     def reset_state(self):
         """
@@ -152,18 +162,14 @@ class simulation:
         potentially each with different dipole moments.
         
         Note that the susceptibility is defined for a single frequency.
-        :param detunings:  The detunings to sweep through for the susceptibility plot.
+        :param detunings:  The detunings (in Hz) to sweep through for the susceptibility plot.
         :return: The susceptibility plot.
         """
         dim = sp.shape(self.system.initial_state)
         chi = sp.zeros((len(detunings), dim[0], dim[1]), dtype=complex)
 
-        detune_mask = sp.zeros(dim)  # Set / reset mask
-        detune_mask[self.ham_obj[0].dipoles != 0] = 1  # Select only nonzero matrix elements of the Hamiltonian
-        detune_mask = sp.triu(detune_mask) - sp.tril(detune_mask)
-
         for i in range(len(detunings)):
-            self.ham_obj[0].freq = detune_mask * detunings[i]
+            self.ham_obj[0].freq = self.mask * detunings[i]
             chi[i] = self.final_state()
             self.reset_state()
 

@@ -73,14 +73,14 @@ dipole_operator_p = 0.063 * muB * sp.asarray([[0, 0, 0, 0, sp.sqrt(0.03), sp.sqr
 
 # Simulation parameters _________________________
 dt = 1e-9
-nt = 300000
+nt = 3000
 the_times = sp.linspace(0, nt * dt, nt, endpoint=False)
 
 # Objects _____________________________________________________________________
 the_atom = atom(initial_state, decay_matrix, decay_to)
 the_hamiltonian_p = hamiltonian_construct(dipole_operator_p, field_amplitude_p, frequencies_p)
 # the_hamiltonian_c = hamiltonian_construct(dipole_operator_c, field_amplitude_c, frequencies_c)
-the_simulation = simulation(the_atom, [the_hamiltonian_p], nt, dt)
+the_simulation = single_atom_simulation(the_atom, [the_hamiltonian_p], nt, dt)
 
 # Run the simulation __________________________________________________________
 t1 = time.time()

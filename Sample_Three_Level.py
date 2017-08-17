@@ -42,7 +42,7 @@ the_times = sp.linspace(0, nt * dt, nt, endpoint=False)
 the_atom = atom(initial_state, decay_matrix)
 the_hamiltonian_p = hamiltonian_construct(dipole_operator_p, field_amplitude_p, frequencies_p)
 the_hamiltonian_c = hamiltonian_construct(dipole_operator_c, field_amplitude_c, frequencies_c)
-the_simulation = simulation(the_atom, [the_hamiltonian_p, the_hamiltonian_c], nt, dt)
+the_simulation = single_atom_simulation(the_atom, [the_hamiltonian_p, the_hamiltonian_c], nt, dt)
 
 # Run the simulation
 t1 = time.time()
