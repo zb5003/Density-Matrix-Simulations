@@ -6,6 +6,7 @@ import time
 import matplotlib.pyplot as plt
 import shutil
 from Atomic_Simulation_Classes import *
+from Inhomogeneous_Broadening_Classes import *
 from Data_Saving_Functions import *
 from physicalconstants import *
 
@@ -37,6 +38,9 @@ decay_to = sp.asarray([[0, 0, 0, sp.sqrt(gamma_slow / 3), 0, 0, 0],
                        [0, 0, 0, 0, 0, 0, 0],
                        [0, 0, 0, 0, 0, 0, 0],
                        [0, 0, 0, 0, 0, 0, 0]])
+
+number_of_atoms = 14000
+ib_linewidth = 2 * sp.pi * number_of_atoms * 2e4
 
 # Beam parameters _______________________________
 power_p = 277e-3
@@ -81,15 +85,16 @@ the_atom = atom(initial_state, decay_matrix, decay_to)
 the_hamiltonian_p = hamiltonian_construct(dipole_operator_p, field_amplitude_p, frequencies_p)
 # the_hamiltonian_c = hamiltonian_construct(dipole_operator_c, field_amplitude_c, frequencies_c)
 the_simulation = single_atom_simulation(the_atom, [the_hamiltonian_p], nt, dt)
+inhomogeneously_broadened_simulation = inhomogeneous_broadening(the_simulation, ib_linewidth, number_of_atoms)
 
 # Run the simulation __________________________________________________________
 t1 = time.time()
-the_flop = the_simulation.time_evolution()
+the_flop = inhomogeneously_broadened_simulation.broadened_time_evolution()
 # the_susceptibility = the_simulation.susceptibility(detunings_p)
 print("Time elapsed = " + str(round(time.time() - t1, 4)) + " seconds")
 
 # Save dat shit _______________________________________________________________
-loc = file_manager("Seven_Level")
+loc = file_manager("Seven_Level_Inhomogeneously_Broadened")
 populations_plot(the_times * 1e6, the_flop, loc)
 crystal_pop_compare(the_times * 1e6, the_flop, loc)
 coherence_plot(the_times * 1e6, the_flop, loc)
