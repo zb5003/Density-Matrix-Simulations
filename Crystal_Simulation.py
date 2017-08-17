@@ -4,7 +4,9 @@ All units are in SI.
 import scipy as sp
 import time
 import matplotlib.pyplot as plt
+import shutil
 from Atomic_Simulation_Classes import *
+from Data_Saving_Functions import *
 from physicalconstants import *
 
 # Atomic parameters _____________________________
@@ -71,14 +73,14 @@ dipole_operator_p = 0.063 * muB * sp.asarray([[0, 0, 0, 0, sp.sqrt(0.03), sp.sqr
 
 # Simulation parameters _________________________
 dt = 1e-9
-nt = 3000000
+nt = 3000
 the_times = sp.linspace(0, nt * dt, nt, endpoint=False)
 
 # Objects _____________________________________________________________________
 the_atom = atom(initial_state, decay_matrix, decay_to)
 the_hamiltonian_p = hamiltonian_construct(dipole_operator_p, field_amplitude_p, frequencies_p)
 # the_hamiltonian_c = hamiltonian_construct(dipole_operator_c, field_amplitude_c, frequencies_c)
-the_simulation = simulation(the_atom, [the_hamiltonian_p], nt, dt)
+the_simulation = single_atom_simulation(the_atom, [the_hamiltonian_p], nt, dt)
 
 # Run the simulation __________________________________________________________
 t1 = time.time()
@@ -86,28 +88,12 @@ the_flop = the_simulation.time_evolution()
 # the_susceptibility = the_simulation.susceptibility(detunings_p)
 print("Time elapsed = " + str(round(time.time() - t1, 4)) + " seconds")
 
-# Plot dat shit _______________________________________________________________
-fig, ax = plt.subplots(nrows=2, ncols=1)
-ax[0].plot(the_times * 1e6, abs(the_flop[:, 0, 0]), label=r"$\rho_{11}$")
-ax[0].plot(the_times * 1e6, abs(the_flop[:, 3, 3]), label=r"$\rho_{44}$")
-ax[0].legend()
-
-ax[1].plot(the_times * 1e6, abs(the_flop[:, 1, 1]), label=r"$\rho_{22}$")
-ax[1].plot(the_times * 1e6, abs(the_flop[:, 2, 2]), label=r"$\rho_{33}$")
-ax[1].legend()
-# ax[1].plot(the_times * 1e6, the_flop[:, 0, 4].real, label=r"$\Re[\rho_{14}]$")
-# ax[1].plot(the_times * 1e6, the_flop[:, 0, 4].imag, label=r"$\Im[\rho_{14}]$")
-# ax[1].legend()
-
-# fig, ax = plt.subplots(nrows=1, ncols=1)
-# ax.plot(detunings_p / 1e6, the_susceptibility[:, 0, 2].real, label=r"$\Re[\chi]$")
-# ax.plot(detunings_p / 1e6, 10 * the_susceptibility[:, 0, 2].imag, label=r"$10\times\Im[\chi]$")
-# ax.legend()
-
-# fig, ax = plt.subplots(nrows=1, ncols=1)
-# ax.plot(detunings_p / 1e6, abs(the_susceptibility[:, 0, 0]), label=r"$\Re[\chi]$")
-# ax.plot(detunings_p / 1e6, abs(the_susceptibility[:, 2, 2]), label=r"$\Im[\chi]$")
-# ax.legend()
-
-plt.show()
+# Save dat shit _______________________________________________________________
+loc = file_manager("Six_Level")
+populations_plot(the_times * 1e6, the_flop, loc)
+crystal_pop_compare(the_times * 1e6, the_flop, loc)
+coherence_plot(the_times * 1e6, the_flop, loc)
+shutil.copy("Crystal_Simulation.py", loc)
+sp.save(loc + "/data.txt", the_flop)
+sp.save(loc + "/times.txt", the_times)
 
