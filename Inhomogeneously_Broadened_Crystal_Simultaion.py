@@ -39,8 +39,8 @@ decay_to = sp.asarray([[0, 0, 0, sp.sqrt(gamma_slow / 3), 0, 0, 0],
                        [0, 0, 0, 0, 0, 0, 0],
                        [0, 0, 0, 0, 0, 0, 0]])
 
-number_of_atoms = 14000
-ib_linewidth = 2 * sp.pi * number_of_atoms * 2e4
+number_of_atoms = 1400
+ib_linewidth = 2 * sp.pi * number_of_atoms * 2e3
 
 # Beam parameters _______________________________
 power_p = 277e-3
@@ -98,7 +98,8 @@ loc = file_manager("Seven_Level_Inhomogeneously_Broadened")
 populations_plot(the_times * 1e6, the_flop, loc)
 crystal_pop_compare(the_times * 1e6, the_flop, loc)
 coherence_plot(the_times * 1e6, the_flop, loc)
+ground_v_excited_7(the_times * 1e6, the_flop, loc)
+total_coherence_7(the_times * 1e6, the_flop, loc)
 shutil.copy("Crystal_Simulation.py", loc)
-sp.save(loc + "/data.txt", the_flop)
-sp.save(loc + "/times.txt", the_times)
-
+# sp.save(loc + "/data.txt", the_flop)  # This could be a pretty big file
+# sp.save(loc + "/times.txt", the_times)

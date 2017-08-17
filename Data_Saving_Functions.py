@@ -102,3 +102,64 @@ def coherence_plot(times, density_m, location):
 
     return None
 
+def ground_v_excited_7(times, density_m, location):
+    """
+    Plot the dynamics of the sum of the three ground hyperfine state populations and the three excited hyperfine state
+    populations.
+    :param times: The times over which to plot the populations in microseconds.
+    :param density_m: The density matrix at each time step.
+    :param location: Directory where plots will be saved.
+    :return: None. 
+    """
+    fig, ax = plt.subplots(nrows=2, ncols=1)
+    ground = abs(density_m[:, 0, 0]) + abs(density_m[:, 1, 1]) + abs(density_m[:, 2, 2])
+    excited = abs(density_m[:, 4, 4]) + abs(density_m[:, 5, 5]) + abs(density_m[:, 6, 6])
+    fig.subplots_adjust(hspace=0.5)
+    ax[0].plot(times, ground, label="Total Ground State")
+    ax[0].plot(times, excited, label="Total Excited State")
+    ax[0].set_title("Total Ground and Excited State v. Time")
+    ax[0].set_xlabel(r"Time ($\mu$s)")
+    ax[0].set_ylabel("State Population")
+    ax[0].legend(bbox_to_anchor=(1, 1), loc=2)
+
+    ax[1].plot(times, 1 - (ground - excited))
+    ax[1].set_title("Absoprtion v. Time")
+    ax[1].set_xlabel(r"Time ($\mu$s)")
+    ax[1].set_ylabel("Absorption (Arb. Units)")
+
+    plt.savefig(location + "/Total_State_Population_Dynamics.png", bbox_inches="tight")
+    plt.close()
+
+    return None
+
+def total_coherence_7(times, density_m, location):
+    """
+    Plot the sum of all the off diagonal elements (in the upper triangle) versus time.
+    :param times: The times over which to plot the populations in microseconds.
+    :param density_m: The density matrix at each time step.
+    :param location: Directory where plots will be saved.
+    :return: None. 
+    """
+    coherence = sp.zeros(sp.shape(density_m)[0], dtype=complex)
+    for i in range(6):
+        for j in range(i + 1, 7):
+            coherence = coherence + density_m[:, i, j]
+
+    fig, ax = plt.subplots(nrows=2, ncols=1)
+    fig.subplots_adjust(hspace=0.5)
+    ax[0].plot(times, coherence.real, label=r"$\Re[\rho_{off-diagonal}]$")
+    ax[0].plot(times, coherence.imag, label=r"$\Im[\rho_{off-diagonal}]$")
+    ax[0].set_title("Real and Imaginary Components of Total Coherence v. Time")
+    ax[0].set_xlabel(r"Time ($\mu$s)")
+    ax[0].set_ylabel("Coherence")
+    ax[0].legend(bbox_to_anchor=(1, 1), loc=2)
+
+    ax[1].plot(times, abs(coherence))
+    ax[1].set_title("Absolute Value of Total Coherence v. Time")
+    ax[0].set_xlabel(r"Time ($\mu$s)")
+    ax[0].set_ylabel("Coherence")
+
+    plt.savefig(location + "/Total_Coherence.png", bbox_inches="tight")
+    plt.close()
+
+    return None
