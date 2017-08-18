@@ -18,6 +18,26 @@ class atom:
         self.current_state = state
         self.decay = decay
         self.closed = closed
+        self.c, self.c_T = self.generate_c(closed)
+
+    def generate_c(self, dec_to_mat):
+        """
+        
+        :param dec_to_mat: 
+        :return: 
+        """
+        dim1 = sp.shape(dec_to_mat)
+        dim2 = sp.count_nonzero(dec_to_mat)
+        c = sp.zeros((dim2, dim1[0], dim1[1]))
+        c_T = sp.zeros((dim2, dim1[0], dim1[1]))
+        counter = [0]
+        for i in range(dim1[0] - 1):
+            for j in range(i + 1, dim1[0]):
+                if dec_to_mat[i, j] != 0:
+                    c[counter[0], i, j] = dec_to_mat[i, j]
+                    c_T[counter[0], j, i] = dec_to_mat[i, j]
+                    counter[0] = counter[0] + 1
+        return c, c_T
 
     def evolve_step(self, hamiltonian, dt):
         """
@@ -28,7 +48,7 @@ class atom:
         :param dt: Time step over which to prefomr the time evolution.
         :return: The time-evolved state.
         """
-        self.current_state = RK_rho(hamiltonian, self.decay, self.current_state, self.closed, dt)
+        self.current_state = RK_rho(hamiltonian, self.decay, self.current_state, [self.c, self.c_T], dt)
         return self.current_state
 
 class hamiltonian_construct:

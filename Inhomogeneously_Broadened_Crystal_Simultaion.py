@@ -22,8 +22,8 @@ initial_state = sp.asarray([[1 / 3, 0, 0, 0, 0, 0, 0],
                             [0, 0, 0, 0, 0, 0, 0],
                             [0, 0, 0, 0, 0, 0, 0]], dtype=complex)
 
-gamma = 2 * sp.pi * 00
-gamma_slow = 2 * sp.pi * 0
+gamma = 2 * sp.pi * 4800
+gamma_slow = 2 * sp.pi * 500
 decay_matrix = sp.asarray([[0, 0, 0, 0, 0, 0, 0],
                            [0, 0, 0, 0, 0, 0, 0],
                            [0, 0, 0, 0, 0, 0, 0],
@@ -31,17 +31,17 @@ decay_matrix = sp.asarray([[0, 0, 0, 0, 0, 0, 0],
                            [0, 0, 0, 0, gamma, 0, 0],
                            [0, 0, 0, 0, 0, gamma, 0],
                            [0, 0, 0, 0, 0, 0, gamma]])
-# decay_to = sp.asarray([[0, 0, 0, sp.sqrt(gamma_slow / 3), 0, 0, 0],
-#                        [0, 0, 0, sp.sqrt(gamma_slow / 3), 0, 0, 0],
-#                        [0, 0, 0, sp.sqrt(gamma_slow / 3), 0, 0, 0],
-#                        [0, 0, 0, 0, sp.sqrt(gamma), sp.sqrt(gamma), sp.sqrt(gamma)],
-#                        [0, 0, 0, 0, 0, 0, 0],
-#                        [0, 0, 0, 0, 0, 0, 0],
-#                        [0, 0, 0, 0, 0, 0, 0]]).T
+decay_to = sp.asarray([[0, 0, 0, sp.sqrt(gamma_slow / 3), 0, 0, 0],
+                       [0, 0, 0, sp.sqrt(gamma_slow / 3), 0, 0, 0],
+                       [0, 0, 0, sp.sqrt(gamma_slow / 3), 0, 0, 0],
+                       [0, 0, 0, 0, sp.sqrt(gamma), sp.sqrt(gamma), sp.sqrt(gamma)],
+                       [0, 0, 0, 0, 0, 0, 0],
+                       [0, 0, 0, 0, 0, 0, 0],
+                       [0, 0, 0, 0, 0, 0, 0]])
 # print(decay_to)
-decay_to = sp.zeros((7, 7))
+# decay_to = sp.zeros((7, 7))
 
-number_of_atoms = 800
+number_of_atoms = 80
 ib_linewidth = 2 * sp.pi * number_of_atoms * 6250
 
 # Beam parameters _______________________________
