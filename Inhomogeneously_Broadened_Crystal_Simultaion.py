@@ -22,7 +22,7 @@ initial_state = sp.asarray([[1 / 3, 0, 0, 0, 0, 0, 0],
                             [0, 0, 0, 0, 0, 0, 0],
                             [0, 0, 0, 0, 0, 0, 0]], dtype=complex)
 
-gamma = 2 * sp.pi * 4800
+gamma = 2 * sp.pi * 00
 gamma_slow = 2 * sp.pi * 0
 decay_matrix = sp.asarray([[0, 0, 0, 0, 0, 0, 0],
                            [0, 0, 0, 0, 0, 0, 0],

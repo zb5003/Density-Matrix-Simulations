@@ -38,10 +38,10 @@ class inhomogeneous_broadening:
         for i in self.detunings:
             self.sing_sim.reset_state()
             self.detune(i)
-            print(sp.where(self.detunings == i))
+            print(sp.where(self.detunings == i), i)
             for j in times:
                 time_dep_state[sp.where(times == j)] = time_dep_state[sp.where(times == j)] \
                                       + self.sing_sim.system.evolve_step(self.sing_sim.evolver(j), self.sing_sim.dt).copy() * \
-                                        sp.exp(-1j * (self.sing_sim.ham_obj[0].freq  + i) * j)
+                                        sp.exp(-1j * (self.sing_sim.ham_obj[0].freq) * j)
 
         return time_dep_state / self.n_atoms
