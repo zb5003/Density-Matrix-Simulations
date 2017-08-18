@@ -22,8 +22,8 @@ class inhomogeneous_broadening:
         :param detuning: The detuning in Hz.
         :return: None.
         """
-        self.sing_sim.reset_detuning()
-        self.sing_sim.ham_obj[0].freq = self.sing_sim.mask * detuning
+        # self.sing_sim.reset_detuning()
+        self.sing_sim.ham_obj[0].freq = self.sing_sim.freq_default + self.sing_sim.mask * detuning
 
         return None
 

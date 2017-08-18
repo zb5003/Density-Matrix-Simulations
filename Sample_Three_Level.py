@@ -39,10 +39,10 @@ nt = 3000
 the_times = sp.linspace(0, nt * dt, nt, endpoint=False)
 
 # Objects
-the_atom = atom(initial_state, decay_matrix)
+the_atom = atom(initial_state, decay_matrix, sp.zeros((3, 3)))
 the_hamiltonian_p = hamiltonian_construct(dipole_operator_p, field_amplitude_p, frequencies_p)
-the_hamiltonian_c = hamiltonian_construct(dipole_operator_c, field_amplitude_c, frequencies_c)
-the_simulation = single_atom_simulation(the_atom, [the_hamiltonian_p, the_hamiltonian_c], nt, dt)
+# the_hamiltonian_c = hamiltonian_construct(dipole_operator_c, field_amplitude_c, frequencies_c)
+the_simulation = single_atom_simulation(the_atom, [the_hamiltonian_p], nt, dt)
 
 # Run the simulation
 t1 = time.time()

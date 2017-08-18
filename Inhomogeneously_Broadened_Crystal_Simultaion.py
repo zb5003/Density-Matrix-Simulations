@@ -23,7 +23,7 @@ initial_state = sp.asarray([[1 / 3, 0, 0, 0, 0, 0, 0],
                             [0, 0, 0, 0, 0, 0, 0]], dtype=complex)
 
 gamma = 2 * sp.pi * 4800
-gamma_slow = 2 * sp.pi * 500
+gamma_slow = 2 * sp.pi * 0
 decay_matrix = sp.asarray([[0, 0, 0, 0, 0, 0, 0],
                            [0, 0, 0, 0, 0, 0, 0],
                            [0, 0, 0, 0, 0, 0, 0],
@@ -37,10 +37,11 @@ decay_matrix = sp.asarray([[0, 0, 0, 0, 0, 0, 0],
 #                        [0, 0, 0, 0, sp.sqrt(gamma), sp.sqrt(gamma), sp.sqrt(gamma)],
 #                        [0, 0, 0, 0, 0, 0, 0],
 #                        [0, 0, 0, 0, 0, 0, 0],
-#                        [0, 0, 0, 0, 0, 0, 0]])
+#                        [0, 0, 0, 0, 0, 0, 0]]).T
+# print(decay_to)
 decay_to = sp.zeros((7, 7))
 
-number_of_atoms = 80
+number_of_atoms = 800
 ib_linewidth = 2 * sp.pi * number_of_atoms * 6250
 
 # Beam parameters _______________________________
@@ -62,7 +63,7 @@ frequencies_intermediate = sp.asarray([[detuning, detuning + upper_spacing[0], d
                             [detuning - lower_spacing[0], detuning + upper_spacing[0] - lower_spacing[0], detuning + sum(upper_spacing) - lower_spacing[0]],
                             [detuning - sum(lower_spacing), detuning + upper_spacing[0] - sum(lower_spacing), detuning + sum(upper_spacing) - sum(lower_spacing)]])
 
-frequencies_p = sp.vstack((sp.hstack((sp.zeros((4, 4)), sp.vstack((frequencies_intermediate, sp.zeros(3))))), sp.hstack((-frequencies_intermediate, sp.zeros((3, 4))))))
+frequencies_p = sp.vstack((sp.hstack((sp.zeros((4, 4)), sp.vstack((frequencies_intermediate, sp.zeros(3))))), sp.hstack((-frequencies_intermediate.T, sp.zeros((3, 4))))))
 
 detunings_p = sp.linspace(-10 * gamma, 10 * gamma, 100)
 dipole_operator_p = 0.063 * muB * sp.asarray([[0, 0, 0, 0, sp.sqrt(0.03), sp.sqrt(0.22), sp.sqrt(0.75)],

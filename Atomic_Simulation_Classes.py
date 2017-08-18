@@ -116,7 +116,7 @@ class single_atom_simulation:
         Return the system to its original state.
         :return: None.
         """
-        self.system.current_state = self.system.initial_state
+        self.system.current_state = self.system.initial_state.copy()
         return None
 
     def reset_detuning(self):
@@ -169,10 +169,9 @@ class single_atom_simulation:
         chi = sp.zeros((len(detunings), dim[0], dim[1]), dtype=complex)
 
         for i in range(len(detunings)):
-            self.ham_obj[0].freq = self.mask * detunings[i]
+            self.ham_obj[0].freq = self.ham_obj[0].freq + self.mask * detunings[i]
             chi[i] = self.final_state()
             self.reset_state()
-
-        self.reset_detuning()
+            self.reset_detuning()
 
         return chi
