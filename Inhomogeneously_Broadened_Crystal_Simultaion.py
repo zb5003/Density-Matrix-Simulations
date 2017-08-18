@@ -31,16 +31,17 @@ decay_matrix = sp.asarray([[0, 0, 0, 0, 0, 0, 0],
                            [0, 0, 0, 0, gamma, 0, 0],
                            [0, 0, 0, 0, 0, gamma, 0],
                            [0, 0, 0, 0, 0, 0, gamma]])
-decay_to = sp.asarray([[0, 0, 0, sp.sqrt(gamma_slow / 3), 0, 0, 0],
-                       [0, 0, 0, sp.sqrt(gamma_slow / 3), 0, 0, 0],
-                       [0, 0, 0, sp.sqrt(gamma_slow / 3), 0, 0, 0],
-                       [0, 0, 0, 0, sp.sqrt(gamma), sp.sqrt(gamma), sp.sqrt(gamma)],
-                       [0, 0, 0, 0, 0, 0, 0],
-                       [0, 0, 0, 0, 0, 0, 0],
-                       [0, 0, 0, 0, 0, 0, 0]])
+# decay_to = sp.asarray([[0, 0, 0, sp.sqrt(gamma_slow / 3), 0, 0, 0],
+#                        [0, 0, 0, sp.sqrt(gamma_slow / 3), 0, 0, 0],
+#                        [0, 0, 0, sp.sqrt(gamma_slow / 3), 0, 0, 0],
+#                        [0, 0, 0, 0, sp.sqrt(gamma), sp.sqrt(gamma), sp.sqrt(gamma)],
+#                        [0, 0, 0, 0, 0, 0, 0],
+#                        [0, 0, 0, 0, 0, 0, 0],
+#                        [0, 0, 0, 0, 0, 0, 0]])
+decay_to = sp.zeros((7, 7))
 
-number_of_atoms = 1400
-ib_linewidth = 2 * sp.pi * number_of_atoms * 2e3
+number_of_atoms = 80
+ib_linewidth = 2 * sp.pi * number_of_atoms * 6250
 
 # Beam parameters _______________________________
 power_p = 277e-3
