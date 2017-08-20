@@ -41,7 +41,7 @@ decay_to = sp.asarray([[0, 0, 0, sp.sqrt(gamma_slow / 3), 0, 0, 0],
 # print(decay_to)
 # decay_to = sp.zeros((7, 7))
 
-number_of_atoms = 80
+number_of_atoms = 80000
 ib_linewidth = 2 * sp.pi * number_of_atoms * 6250
 
 # Beam parameters _______________________________
