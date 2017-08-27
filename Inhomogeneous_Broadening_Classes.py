@@ -1,4 +1,5 @@
 import scipy as sp
+import time
 from Atomic_Simulation_Classes import *
 
 class inhomogeneous_broadening:
@@ -38,10 +39,12 @@ class inhomogeneous_broadening:
         for i in self.detunings:
             self.sing_sim.reset_state()
             self.detune(i)
-            print(sp.where(self.detunings == i), i)
+            t1 = time.time()
             for j in times:
                 time_dep_state[sp.where(times == j)] = time_dep_state[sp.where(times == j)] \
                                       + self.sing_sim.system.evolve_step(self.sing_sim.evolver(j), self.sing_sim.dt).copy() * \
                                         sp.exp(-1j * (self.sing_sim.ham_obj[0].freq) * j)
+            print("Atom number =",sp.where(self.detunings == i)[0][0], "Detuning =", round(i / 1e6, 4), "MHz",
+                  "Time elapsed =", str(round(time.time() - t1, 4)), "seconds")
 
         return time_dep_state / self.n_atoms

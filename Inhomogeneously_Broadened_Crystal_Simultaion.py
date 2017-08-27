@@ -22,8 +22,8 @@ initial_state = sp.asarray([[1 / 3, 0, 0, 0, 0, 0, 0],
                             [0, 0, 0, 0, 0, 0, 0],
                             [0, 0, 0, 0, 0, 0, 0]], dtype=complex)
 
-gamma = 2 * sp.pi * 4800
-gamma_slow = 2 * sp.pi * 500
+gamma = 1 / 33e-6
+gamma_slow = 1 / 1.61e-3
 decay_matrix = sp.asarray([[0, 0, 0, 0, 0, 0, 0],
                            [0, 0, 0, 0, 0, 0, 0],
                            [0, 0, 0, 0, 0, 0, 0],
@@ -41,8 +41,8 @@ decay_to = sp.asarray([[0, 0, 0, sp.sqrt(gamma_slow / 3), 0, 0, 0],
 # print(decay_to)
 # decay_to = sp.zeros((7, 7))
 
-number_of_atoms = 80000
-ib_linewidth = 2 * sp.pi * number_of_atoms * 6250
+number_of_atoms = 4000 #40000
+ib_linewidth = 2 * sp.pi * number_of_atoms * 25000
 
 # Beam parameters _______________________________
 power_p = 277e-3
@@ -50,7 +50,7 @@ waist_p = 112e-6 / 2
 intensity_p = power_p / (2 * sp.pi * waist_p**2)
 field_amplitude_p = sp.sqrt(4 * mu0 * n * power_p / (c * sp.pi * waist_p**2))
 Rabi = 0.063 * muB * field_amplitude_p / hbar
-print(Rabi, 1 / Rabi)
+print("Rabi frequency =", Rabi, "MHz; Rabi period =", round(1 / Rabi * 1e6, 3), "microseconds")
 
 # power_c = 0.05
 # waist_c = 2000e-6
@@ -78,8 +78,8 @@ dipole_operator_p = 0.063 * muB * sp.asarray([[0, 0, 0, 0, sp.sqrt(0.03), sp.sqr
 # dipole_operator_c = a0 * e_charge * sp.asarray([[0, 0, 0], [0, 0, 1], [0, 1, 0]])
 
 # Simulation parameters _________________________
-dt = 1e-9
-nt = 3000
+dt = 5e-10
+nt = 2100
 the_times = sp.linspace(0, nt * dt, nt, endpoint=False)
 
 # Objects _____________________________________________________________________
@@ -90,10 +90,10 @@ the_simulation = single_atom_simulation(the_atom, [the_hamiltonian_p], nt, dt)
 inhomogeneously_broadened_simulation = inhomogeneous_broadening(the_simulation, ib_linewidth, number_of_atoms)
 
 # Run the simulation __________________________________________________________
-t1 = time.time()
+t11 = time.time()
 the_flop = inhomogeneously_broadened_simulation.broadened_time_evolution()
 # the_susceptibility = the_simulation.susceptibility(detunings_p)
-print("Time elapsed = " + str(round(time.time() - t1, 4)) + " seconds")
+print("Time elapsed = " + str(round(time.time() - t11, 4)) + " seconds")
 
 # Save dat shit _______________________________________________________________
 loc = file_manager("Seven_Level_Inhomogeneously_Broadened")
