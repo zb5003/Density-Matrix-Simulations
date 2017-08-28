@@ -37,7 +37,10 @@ def rho_dot(Hamiltonian, Gamma, rho, closed):
     :param rho: density matrix.
     :return: Time derivative of the density matrix as a 2-D ndarray (dtype=complex).
     """
-    return -1j / hbar * commutator(Hamiltonian, rho) - 1 / 2 * anticommutator(Gamma, rho) + sp.sum(sp.matmul(closed[0], sp.matmul(rho, closed[1])))
+    # print(closed[0])
+    # print(closed[0][0])
+    # print(sp.shape(closed[1]), sp.shape(closed[0]))
+    return -1j / hbar * commutator(Hamiltonian, rho) - 1 / 2 * anticommutator(Gamma, rho) + sum(sp.matmul(closed[0], sp.matmul(rho, closed[1])))
 
 def RK_rho(Hamiltonian, Gamma, rho, closed, dt):
     """

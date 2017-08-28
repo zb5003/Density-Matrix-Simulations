@@ -41,8 +41,8 @@ decay_to = sp.asarray([[0, 0, 0, sp.sqrt(gamma_slow / 3), 0, 0, 0],
 # print(decay_to)
 # decay_to = sp.zeros((7, 7))
 
-number_of_atoms = 4000 #40000
-ib_linewidth = 2 * sp.pi * number_of_atoms * 25000
+number_of_atoms = 400 #40000
+ib_linewidth = 2 * sp.pi * 1e9 #number_of_atoms * 25000
 
 # Beam parameters _______________________________
 power_p = 277e-3
@@ -58,7 +58,7 @@ print("Rabi frequency =", Rabi, "MHz; Rabi period =", round(1 / Rabi * 1e6, 3), 
 # field_amplitude_c = sp.sqrt(2 * intensity_c / (n * epsilon0 * c))
 
 # Interaction parameters ________________________
-detuning = 0
+detuning = -35 * 1e6 * 0
 frequencies_intermediate = sp.asarray([[detuning, detuning + upper_spacing[0], detuning + sum(upper_spacing)],
                             [detuning - lower_spacing[0], detuning + upper_spacing[0] - lower_spacing[0], detuning + sum(upper_spacing) - lower_spacing[0]],
                             [detuning - sum(lower_spacing), detuning + upper_spacing[0] - sum(lower_spacing), detuning + sum(upper_spacing) - sum(lower_spacing)]])
@@ -78,7 +78,7 @@ dipole_operator_p = 0.063 * muB * sp.asarray([[0, 0, 0, 0, sp.sqrt(0.03), sp.sqr
 # dipole_operator_c = a0 * e_charge * sp.asarray([[0, 0, 0], [0, 0, 1], [0, 1, 0]])
 
 # Simulation parameters _________________________
-dt = 5e-10
+dt = 1e-9
 nt = 2100
 the_times = sp.linspace(0, nt * dt, nt, endpoint=False)
 

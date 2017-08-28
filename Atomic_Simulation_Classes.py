@@ -37,6 +37,7 @@ class atom:
                     c[counter[0], i, j] = dec_to_mat[i, j]
                     c_T[counter[0], j, i] = dec_to_mat[i, j]
                     counter[0] = counter[0] + 1
+        # print(c, c_T)
         return c, c_T
 
     def evolve_step(self, hamiltonian, dt):
@@ -89,7 +90,7 @@ class hamiltonian_construct:
         :param t: Time.
         :return: Relative field amplitude at time t.
         """
-        return 1  #1 / (1 + sp.exp(-(t - hamiltonian_construct.tau_naught) / hamiltonian_construct.tau))
+        return 1 / (1 + sp.exp(-(t - hamiltonian_construct.tau_naught) / hamiltonian_construct.tau))
 
     def hamiltonian(self, t):
         """

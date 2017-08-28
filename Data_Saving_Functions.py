@@ -91,7 +91,7 @@ def coherence_plot(times, density_m, location):
         for j in range(i + 1, sp.shape(density_m)[1]):
             fig, ax = plt.subplots(nrows=1, ncols=1)
             ax.plot(times, density_m[:, i, j].real, label=r'$\Re[\rho_{' + str(i + 1) + str(j + 1) + '}]$')
-            ax.plot(times, density_m[:, i, j].imag, label=r'$\Im[\rho_{' + str(i + 1) + str(j + 1) + '}]$')
+            # ax.plot(times, density_m[:, i, j].imag, label=r'$\Im[\rho_{' + str(i + 1) + str(j + 1) + '}]$')
             ax.set_title(r"Coherence Between States " + str(i + 1) + " and " + str(j + 1) + "v. Time")
             ax.set_xlabel(r"Time ($\mu$s)")
             ax.set_ylabel(r"$|\rho_{" + str(i + 1) + str(j + 1) + "}|$")
@@ -114,6 +114,7 @@ def ground_v_excited_7(times, density_m, location):
     fig, ax = plt.subplots(nrows=2, ncols=1)
     ground = abs(density_m[:, 0, 0]) + abs(density_m[:, 1, 1]) + abs(density_m[:, 2, 2])
     excited = abs(density_m[:, 4, 4]) + abs(density_m[:, 5, 5]) + abs(density_m[:, 6, 6])
+    total = abs(sum([density_m[:, i, i] for i in range(7)]))
     fig.subplots_adjust(hspace=0.5)
     ax[0].plot(times, ground, label="Total Ground State")
     ax[0].plot(times, excited, label="Total Excited State")
@@ -130,6 +131,11 @@ def ground_v_excited_7(times, density_m, location):
     plt.savefig(location + "/Total_State_Population_Dynamics.png", bbox_inches="tight")
     plt.close()
 
+    fig, ax = plt.subplots(nrows=1, ncols=1)
+    ax.plot(times, total)
+    ax.set_ylim([-0.1, 1.2])
+    plt.savefig(location + "/Total_population.png")
+
     return None
 
 def total_coherence_7(times, density_m, location):
@@ -141,9 +147,10 @@ def total_coherence_7(times, density_m, location):
     :return: None. 
     """
     coherence = sp.zeros(sp.shape(density_m)[0], dtype=complex)
-    for i in range(6):
-        for j in range(i + 1, 7):
+    for i in range(2):
+        for j in range(i + 1, 2):
             coherence = coherence + density_m[:, i, j]
+    coherence = coherence / 9
 
     fig, ax = plt.subplots(nrows=2, ncols=1)
     fig.subplots_adjust(hspace=0.5)
