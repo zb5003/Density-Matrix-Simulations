@@ -17,8 +17,8 @@ gamma = 2 * sp.pi * 1e6
 decay_matrix = sp.asarray([[0, 0], [0, gamma]])
 decay_to = sp.asarray([[0, sp.sqrt(gamma)], [0, 0]])
 
-number_of_atoms = 1
-ib_linewidth = 2 * sp.pi * 1e9 * 0
+number_of_atoms = 400
+ib_linewidth = 2 * sp.pi * 1e9
 
 # Beam parameters
 power_p = 0.01
@@ -58,10 +58,10 @@ print("Time elapsed = " + str(round(time.time() - t1, 4)) + " seconds")
 # Save dat shit _______________________________________________________________
 loc = file_manager("Two_Level_Inhomogeneously_Broadened")
 populations_plot(the_times * 1e6, the_flop, loc)
-crystal_pop_compare(the_times * 1e6, the_flop, loc)
+# crystal_pop_compare(the_times * 1e6, the_flop, loc)
 coherence_plot(the_times * 1e6, the_flop, loc)
-ground_v_excited_7(the_times * 1e6, the_flop, loc)
-# total_coherence_7(the_times * 1e6, the_flop, loc)
+ground_v_excited_2(the_times * 1e6, the_flop, loc)
+total_coherence_2(the_times * 1e6, the_flop, loc)
 shutil.copy("Crystal_Simulation.py", loc)
 # Plot dat shit
 # fig, ax = plt.subplots(nrows=2, ncols=1)

@@ -41,7 +41,7 @@ decay_to = sp.asarray([[0, 0, 0, sp.sqrt(gamma_slow / 3), 0, 0, 0],
 # print(decay_to)
 # decay_to = sp.zeros((7, 7))
 
-number_of_atoms = 400 #40000
+number_of_atoms = 4000 #40000
 ib_linewidth = 2 * sp.pi * 1e9 #number_of_atoms * 25000
 
 # Beam parameters _______________________________
@@ -50,7 +50,6 @@ waist_p = 112e-6 / 2
 intensity_p = power_p / (2 * sp.pi * waist_p**2)
 field_amplitude_p = sp.sqrt(4 * mu0 * n * power_p / (c * sp.pi * waist_p**2))
 Rabi = 0.063 * muB * field_amplitude_p / hbar
-print("Rabi frequency =", Rabi, "MHz; Rabi period =", round(1 / Rabi * 1e6, 3), "microseconds")
 
 # power_c = 0.05
 # waist_c = 2000e-6
@@ -94,6 +93,7 @@ t11 = time.time()
 the_flop = inhomogeneously_broadened_simulation.broadened_time_evolution()
 # the_susceptibility = the_simulation.susceptibility(detunings_p)
 print("Time elapsed = " + str(round(time.time() - t11, 4)) + " seconds")
+print("Rabi frequency =", Rabi, "MHz; Rabi period =", round(1 / Rabi * 1e6, 3), "microseconds")
 
 # Save dat shit _______________________________________________________________
 loc = file_manager("Seven_Level_Inhomogeneously_Broadened")
