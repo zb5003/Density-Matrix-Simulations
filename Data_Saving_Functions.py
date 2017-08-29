@@ -2,6 +2,7 @@ import datetime
 import os
 import scipy as sp
 import matplotlib.pyplot as plt
+from physicalconstants import *
 
 def file_manager(subfolder):
     """
@@ -111,7 +112,7 @@ def ground_v_excited_7(times, density_m, location):
     :param location: Directory where plots will be saved.
     :return: None. 
     """
-    fig, ax = plt.subplots(nrows=3, ncols=1)
+    fig, ax = plt.subplots(nrows=2, ncols=1)
     ground = abs(density_m[:, 0, 0]) + abs(density_m[:, 1, 1]) + abs(density_m[:, 2, 2])
     excited = abs(density_m[:, 4, 4]) + abs(density_m[:, 5, 5]) + abs(density_m[:, 6, 6])
     total = abs(sum([density_m[:, i, i] for i in range(7)]))
@@ -123,12 +124,10 @@ def ground_v_excited_7(times, density_m, location):
     ax[0].set_ylabel("State Population")
     ax[0].legend(bbox_to_anchor=(1, 1), loc=2)
 
-    ax[1].plot(times, 1 - (ground - excited))
+    ax[1].plot(times, 1 + excited - ground)
     ax[1].set_title("Absoprtion v. Time")
     ax[1].set_xlabel(r"Time ($\mu$s)")
     ax[1].set_ylabel("Absorption (Arb. Units)")
-
-    ax[2].plot(times, total)
 
     plt.savefig(location + "/Total_State_Population_Dynamics.png", bbox_inches="tight")
     plt.close()
@@ -149,10 +148,10 @@ def total_coherence_7(times, density_m, location):
     :return: None. 
     """
     coherence = sp.zeros(sp.shape(density_m)[0], dtype=complex)
-    for i in range(7):
+    for i in range(6):
         for j in range(i + 1, 7):
             coherence = coherence + density_m[:, i, j]
-    coherence = coherence / 9
+    coherence = 0.063 * muB * (coherence / 9) * 9.35e24
 
     fig, ax = plt.subplots(nrows=2, ncols=1)
     fig.subplots_adjust(hspace=0.5)
@@ -194,7 +193,7 @@ def ground_v_excited_2(times, density_m, location):
     ax[0].set_ylabel("State Population")
     ax[0].legend(bbox_to_anchor=(1, 1), loc=2)
 
-    ax[1].plot(times, 1 - (ground - excited))
+    ax[1].plot(times, excited - ground)
     ax[1].set_title("Absoprtion v. Time")
     ax[1].set_xlabel(r"Time ($\mu$s)")
     ax[1].set_ylabel("Absorption (Arb. Units)")
