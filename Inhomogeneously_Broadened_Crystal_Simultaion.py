@@ -41,7 +41,7 @@ decay_to = sp.asarray([[0, 0, 0, sp.sqrt(gamma_slow / 3), 0, 0, 0],
 # print(decay_to)
 # decay_to = sp.zeros((7, 7))
 
-number_of_atoms = 4000 #40000
+number_of_atoms = 40000 #40000
 ib_linewidth = 2 * sp.pi * 1e9 #number_of_atoms * 25000
 
 # Beam parameters _______________________________
@@ -103,5 +103,5 @@ coherence_plot(the_times * 1e6, the_flop, loc)
 ground_v_excited_7(the_times * 1e6, the_flop, loc)
 total_coherence_7(the_times * 1e6, the_flop, loc)
 shutil.copy("Crystal_Simulation.py", loc)
-# sp.save(loc + "/data.txt", the_flop)  # This could be a pretty big file
-# sp.save(loc + "/times.txt", the_times)
+sp.save(loc + "/data.txt", the_flop)  # This could be a pretty big file
+sp.save(loc + "/times.txt", the_times)
