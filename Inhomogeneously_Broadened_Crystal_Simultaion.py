@@ -93,8 +93,8 @@ dipole_operator_p = 0.063 * muB * sp.asarray([[0, 0, 0, 0, sp.sqrt(0.85), sp.sqr
 # dipole_operator_c = a0 * e_charge * sp.asarray([[0, 0, 0], [0, 0, 1], [0, 1, 0]])
 
 # Simulation parameters _________________________
-dt = 1e-9
-nt = 2100
+dt = 1e-10
+nt = 21000
 the_times = sp.linspace(0, nt * dt, nt, endpoint=False)
 
 # Objects _____________________________________________________________________

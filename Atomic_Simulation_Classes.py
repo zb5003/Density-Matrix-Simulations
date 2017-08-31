@@ -99,7 +99,7 @@ class hamiltonian_construct:
         :param t: Time.
         :return: The physical Hamiltonian at time t.
         """
-        return self.envelope(t) * self.carrier(t) / 2
+        return - self.envelope(t) * self.carrier(t) / 2
 
 class single_atom_simulation:
 

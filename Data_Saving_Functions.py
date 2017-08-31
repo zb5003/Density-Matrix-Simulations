@@ -148,8 +148,8 @@ def total_coherence_7(times, density_m, location):
     :return: None. 
     """
     coherence = sp.zeros(sp.shape(density_m)[0], dtype=complex)
-    for i in range(6):
-        for j in range(i + 1, 7):
+    for i in range(3):
+        for j in range(4, 7):
             coherence = coherence + density_m[:, i, j]
     coherence = 0.063 * muB * (coherence / 9) * 9.35e24
 
