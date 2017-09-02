@@ -37,10 +37,9 @@ def rho_dot(Hamiltonian, Gamma, rho, closed):
     :param rho: density matrix.
     :return: Time derivative of the density matrix as a 2-D ndarray (dtype=complex).
     """
-    # print(closed[0])
-    # print(closed[0][0])
-    # print(sp.shape(closed[1]), sp.shape(closed[0]))
-    return -1j / hbar * commutator(Hamiltonian, rho) - 1 / 2 * anticommutator(Gamma, rho) + sum(sp.matmul(closed[0], sp.matmul(rho, closed[1])))
+    return -1j / hbar * commutator(Hamiltonian, rho) \
+           - 1 / 2 * anticommutator(Gamma, rho) \
+           + sum(sp.matmul(closed[0], sp.matmul(rho, closed[1])))
 
 def RK_rho(Hamiltonian, Gamma, rho, closed, dt):
     """
@@ -52,10 +51,10 @@ def RK_rho(Hamiltonian, Gamma, rho, closed, dt):
     :return: Density matrix after evolving for time dt as a 2-D ndarray (dtype=complex).
     """
     F1 = dt * rho_dot(Hamiltonian, Gamma, rho, closed)
-    F2 = dt * rho_dot(Hamiltonian, Gamma, rho + 1. / 2 * F1, closed)
-    F3 = dt * rho_dot(Hamiltonian, Gamma, rho + 1. / 2 * F2, closed)
+    F2 = dt * rho_dot(Hamiltonian, Gamma, rho + 1 / 2 * F1, closed)
+    F3 = dt * rho_dot(Hamiltonian, Gamma, rho + 1 / 2 * F2, closed)
     F4 = dt * rho_dot(Hamiltonian, Gamma, rho + F3, closed)
-    return rho + 1. / 6 * (F1 + 2 * F2 + 2 * F3 + F4)
+    return rho + 1 / 6 * (F1 + 2 * F2 + 2 * F3 + F4)
 
 def time_evolve(Hamiltonian, Gamma, rho, closed, dt, nt):
     """

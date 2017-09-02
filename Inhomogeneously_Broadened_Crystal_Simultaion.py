@@ -43,8 +43,8 @@ decay_to = sp.asarray([[0, 0, 0, sp.sqrt(gamma_slow / 3), 0, 0, 0],
 # print(decay_to)
 # decay_to = sp.zeros((7, 7))
 
-number_of_atoms = 400 #40000
-ib_linewidth = 2 * sp.pi * 1e9 #number_of_atoms * 25000
+number_of_atoms = 1 #40000
+ib_linewidth = 2 * sp.pi * 1e9 * 0 #number_of_atoms * 25000
 
 # Beam parameters _______________________________
 power_p = 277e-3
@@ -93,8 +93,8 @@ dipole_operator_p = 0.063 * muB * sp.asarray([[0, 0, 0, 0, sp.sqrt(0.85), sp.sqr
 # dipole_operator_c = a0 * e_charge * sp.asarray([[0, 0, 0], [0, 0, 1], [0, 1, 0]])
 
 # Simulation parameters _________________________
-dt = 1e-10
-nt = 21000
+dt = 1e-9
+nt = 2100
 the_times = sp.linspace(0, nt * dt, nt, endpoint=False)
 
 # Objects _____________________________________________________________________
@@ -120,7 +120,7 @@ print("Time elapsed = " + str(round(time.time() - t11, 4)) + " seconds")
 print("Rabi frequency =", Rabi, "MHz; Rabi period =", round(1 / Rabi * 1e6, 3), "microseconds")
 
 # Save dat shit _______________________________________________________________
-loc = file_manager("Seven_Level_Inhomogeneously_Broadened")
+loc = file_manager("test")#Seven_Level_Inhomogeneously_Broadened")
 populations_plot(the_times * 1e6, the_flop, loc)
 crystal_pop_compare(the_times * 1e6, the_flop, loc)
 coherence_plot(the_times * 1e6, the_flop, loc)

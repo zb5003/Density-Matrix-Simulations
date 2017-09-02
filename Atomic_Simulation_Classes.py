@@ -2,7 +2,10 @@ from nlevel import *
 
 class atom:
 
-    def __init__(self, state, decay, closed):
+    def __init__(self,
+                 state,
+                 decay,
+                 closed):
         """
         Create an atom instance with initial state 'state' whose levels decay according to the 
         matrix decay.
@@ -26,21 +29,21 @@ class atom:
         :param dec_to_mat: 
         :return: 
         """
-        dim1 = sp.shape(dec_to_mat)
-        dim2 = sp.count_nonzero(dec_to_mat)
-        c = sp.zeros((dim2, dim1[0], dim1[1]))
-        c_T = sp.zeros((dim2, dim1[0], dim1[1]))
-        counter = [0]
-        for i in range(dim1[0] - 1):
-            for j in range(i + 1, dim1[0]):
-                if dec_to_mat[i, j] != 0:
-                    c[counter[0], i, j] = dec_to_mat[i, j]
-                    c_T[counter[0], j, i] = dec_to_mat[i, j]
-                    counter[0] = counter[0] + 1
-        # print(c, c_T)
+        dim1, dim2 = sp.shape(dec_to_mat)
+        dim3 = sp.count_nonzero(dec_to_mat)
+        c = sp.zeros((dim3, dim1, dim2))
+        c_T = sp.zeros((dim3, dim1, dim2))
+        for k in range(c):
+            for i in range(dim1 - 1):
+                for j in range(i + 1, dim1):
+                    if dec_to_mat[i, j] != 0:
+                        c[k, i, j] = dec_to_mat[i, j]
+                        c_T[k, j, i] = dec_to_mat[i, j]
         return c, c_T
 
-    def evolve_step(self, hamiltonian, dt):
+    def evolve_step(self,
+                    hamiltonian,
+                    dt):
         """
         Preform one step of the time evolution of the atom using the Runge-Kutta
         fourth order method (found in nlevel.py).
@@ -49,16 +52,19 @@ class atom:
         :param dt: Time step over which to prefomr the time evolution.
         :return: The time-evolved state.
         """
-        self.current_state = RK_rho(hamiltonian, self.decay, self.current_state, [self.c, self.c_T], dt)
+        self.current_state = RK_rho(hamiltonian,
+                                    self.decay,
+                                    self.current_state,
+                                    [self.c, self.c_T],
+                                    dt)
         return self.current_state
 
 class hamiltonian_construct:
 
-    # Tunr on parameters for a ~80 MHz AOM.
-    tau = 9e-9
-    tau_naught = 90e-9
-
-    def __init__(self, dipoles, field, freq):
+    def __init__(self,
+                 dipoles,
+                 field,
+                 freq):
         """
         This class produces a realistic time dependent Hamiltonian (i.e. includes laser turn on) 
         in the interaction picture and dipole approximation.
@@ -71,7 +77,12 @@ class hamiltonian_construct:
         self.field = field
         self.freq = freq
 
-        self.rabi_freqs = dipoles * field / hbar  # for reference
+        # For reference
+        self.rabi_freqs = dipoles * field / hbar
+
+        # Turn on parameters for a ~80 MHz AOM.
+        self.tau = 9e-9
+        self.tau_0 = 90e-9
 
     def carrier(self, t):
         """
@@ -90,7 +101,7 @@ class hamiltonian_construct:
         :param t: Time.
         :return: Relative field amplitude at time t.
         """
-        return 1 / (1 + sp.exp(-(t - hamiltonian_construct.tau_naught) / hamiltonian_construct.tau))
+        return 1 / (1 + sp.exp(-(t - self.tau_0) / self.tau))
 
     def hamiltonian(self, t):
         """
@@ -103,7 +114,11 @@ class hamiltonian_construct:
 
 class single_atom_simulation:
 
-    def __init__(self, system, ham_obj, nt, dt):
+    def __init__(self,
+                 system,
+                 ham_obj,
+                 nt,
+                 dt):
         """
         Create an instance of a simulation that calculates the time evolution of a single atom interacting
         with lasers at fixed frequencies.
@@ -119,6 +134,7 @@ class single_atom_simulation:
         self.nt = nt
         self.dt = dt
 
+        self.duration = nt * dt
         self.evolver = lambda t: sum([k.hamiltonian(t) for k in ham_obj])
         self.freq_default = ham_obj[0].freq.copy()
         self.mask = self.generate_mask()
@@ -132,20 +148,13 @@ class single_atom_simulation:
         detune_mask[self.ham_obj[0].dipoles != 0] = 1  # Select only nonzero matrix elements of the Hamiltonian
         return sp.triu(detune_mask) - sp.tril(detune_mask)
 
-    def reset_state(self):
+    def detune(self, detuning):
         """
-        Return the system to its original state.
-        :return: None.
+        
+        :param detuning: 
+        :return: 
         """
-        self.system.current_state = self.system.initial_state.copy()
-        return None
-
-    def reset_detuning(self):
-        """
-        Reset the frequencies of the beams (probably after a susceptibility simulation).
-        :return: None.
-        """
-        self.ham_obj[0].freq = self.freq_default.copy()
+        self.ham_obj[0].freq = self.freq_default + self.mask * detuning
         return None
 
     def final_state(self):
@@ -153,12 +162,40 @@ class single_atom_simulation:
         Calculate the state of the system after nt timesteps of size dt.
         :return: The final state of the system (matrix).
         """
-        times = sp.linspace(0, self.nt * self.dt, self.nt, endpoint=False)
+        times = sp.linspace(0, self.duration, self.nt, endpoint=False)
         for i in times:
             self.system.evolve_step(self.evolver(i), self.dt)
-        final_untrans = self.system.current_state * sp.exp(-1j * self.ham_obj[0].freq * (self.nt - 1) * self.dt)
+        final_untrans = self.system.current_state * \
+                        sp.exp(-1j * self.ham_obj[0].freq * (self.nt - 1) * self.dt)
 
         return final_untrans
+
+    def reset_state(self):
+        """
+        Return the system to its original state.
+        :return: None.
+        """
+        self.system.current_state = self.system.initial_state
+        return None
+
+    def susceptibility(self, detunings):
+        """
+        Calculate the susceptibility curve for a given system interacting with an arbitrary number of lasers,
+        potentially each with different dipole moments.
+
+        Note that the susceptibility is defined for a single frequency.
+        :param detunings:  The detunings (in Hz) to sweep through for the susceptibility plot.
+        :return: The susceptibility plot.
+        """
+        dim1, dim2 = sp.shape(self.system.initial_state)
+        chi = sp.zeros((len(detunings), dim1, dim2), dtype=complex)
+
+        for index, i in enumerate(detunings):
+            self.detune()
+            chi[index] = self.final_state()
+            self.reset_state()
+
+        return chi
 
     def time_evolution(self):
         """
@@ -166,33 +203,13 @@ class single_atom_simulation:
         :return: The state at ever timestep of the simulation.
         """
 
-        row = sp.shape(self.system.initial_state)[0]
-        column = sp.shape(self.system.initial_state)[0]
-        times = sp.linspace(0, self.nt * self.dt, self.nt, endpoint=False)
+        row, column = sp.shape(self.system.initial_state)
+        times = sp.linspace(0, self.duration, self.nt, endpoint=False)
         time_dep_state = sp.zeros((self.nt, row, column), dtype=complex)
 
-        for i in times:
-            time_dep_state[sp.where(times == i)] = self.system.evolve_step(self.evolver(i), self.dt).copy() * \
+        for index, i in enumerate(times):
+            time_dep_state[index] = self.system.evolve_step(self.evolver(i),
+                                                            self.dt).copy() * \
                                                sp.exp(-1j * self.ham_obj[0].freq * i)
 
         return time_dep_state
-
-    def susceptibility(self, detunings):
-        """
-        Calculate the susceptibility curve for a given system interacting with an arbitrary number of lasers,
-        potentially each with different dipole moments.
-        
-        Note that the susceptibility is defined for a single frequency.
-        :param detunings:  The detunings (in Hz) to sweep through for the susceptibility plot.
-        :return: The susceptibility plot.
-        """
-        dim = sp.shape(self.system.initial_state)
-        chi = sp.zeros((len(detunings), dim[0], dim[1]), dtype=complex)
-
-        for i in range(len(detunings)):
-            self.ham_obj[0].freq = self.ham_obj[0].freq + self.mask * detunings[i]
-            chi[i] = self.final_state()
-            self.reset_state()
-            self.reset_detuning()
-
-        return chi
