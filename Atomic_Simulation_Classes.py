@@ -33,7 +33,7 @@ class atom:
         dim3 = sp.count_nonzero(dec_to_mat)
         c = sp.zeros((dim3, dim1, dim2))
         c_T = sp.zeros((dim3, dim1, dim2))
-        for k in range(c):
+        for k in range(dim3):
             for i in range(dim1 - 1):
                 for j in range(i + 1, dim1):
                     if dec_to_mat[i, j] != 0:
@@ -197,12 +197,12 @@ class single_atom_simulation:
 
         return chi
 
-    def time_evolution(self):
+    def time_evolution_serial(self, detuning=0):
         """
         Calculate the state of the system at each of the nt time steps of size dt.
         :return: The state at ever timestep of the simulation.
         """
-
+        self.detune(detuning)
         row, column = sp.shape(self.system.initial_state)
         times = sp.linspace(0, self.duration, self.nt, endpoint=False)
         time_dep_state = sp.zeros((self.nt, row, column), dtype=complex)
@@ -213,3 +213,23 @@ class single_atom_simulation:
                                                sp.exp(-1j * self.ham_obj[0].freq * i)
 
         return time_dep_state
+
+    def time_evolution(self, re, im, detuning=0):
+        """
+        Calculate the state of the system at each of the nt time steps of size dt.
+        :return: The state at ever timestep of the simulation.
+        """
+        self.detune(detuning)
+        row, column = sp.shape(self.system.initial_state)
+        times = sp.linspace(0, self.duration, self.nt, endpoint=False)
+        time_dep_state = sp.zeros((self.nt, row, column), dtype=complex)
+
+        for index, i in enumerate(times):
+            time_dep_state[index] = self.system.evolve_step(self.evolver(i),
+                                                            self.dt).copy() * \
+                                               sp.exp(-1j * self.ham_obj[0].freq * i)
+
+        re[:] = [i + j for i, j in zip(re[:], sp.reshape(time_dep_state.real, self.nt * row * column))]
+        im[:] = [i + j for i, j in zip(im[:], sp.reshape(time_dep_state.imag, self.nt * row * column))]
+
+        return None

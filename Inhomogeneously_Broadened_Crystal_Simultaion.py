@@ -5,6 +5,7 @@ import scipy as sp
 import time
 import matplotlib.pyplot as plt
 import shutil
+import multiprocessing as mp
 from Atomic_Simulation_Classes import *
 from Inhomogeneous_Broadening_Classes import *
 from Data_Saving_Functions import *
@@ -40,10 +41,8 @@ decay_to = sp.asarray([[0, 0, 0, sp.sqrt(gamma_slow / 3), 0, 0, 0],
                        [0, 0, 0, 0, 0, 0, 0],
                        [0, 0, 0, 0, 0, 0, 0],
                        [0, 0, 0, 0, 0, 0, 0]])
-# print(decay_to)
-# decay_to = sp.zeros((7, 7))
 
-number_of_atoms = 1 #40000
+number_of_atoms = 10 #40000
 ib_linewidth = 2 * sp.pi * 1e9 * 0 #number_of_atoms * 25000
 
 # Beam parameters _______________________________
@@ -52,11 +51,6 @@ waist_p = 112e-6 / 2
 intensity_p = power_p / (2 * sp.pi * waist_p**2)
 field_amplitude_p = sp.sqrt(4 * mu0 * n * power_p / (c * sp.pi * waist_p**2))
 Rabi = 0.063 * muB * field_amplitude_p / hbar
-
-# power_c = 0.05
-# waist_c = 2000e-6
-# intensity_c = power_c / (2 * sp.pi * waist_c**2)
-# field_amplitude_c = sp.sqrt(2 * intensity_c / (n * epsilon0 * c))
 
 # Interaction parameters ________________________
 detuning = -35 * 1e6
@@ -71,16 +65,10 @@ frequencies_intermediate_151 = sp.asarray([[detuning, detuning + upper_spacing_1
                             [detuning - lower_spacing_151[0], detuning + upper_spacing_151[0] - lower_spacing_151[0], detuning + sum(upper_spacing_151) - lower_spacing_151[0]],
                             [detuning - sum(lower_spacing_151), detuning + upper_spacing_151[0] - sum(lower_spacing_151), detuning + sum(upper_spacing_151) - sum(lower_spacing_151)]])
 
-frequencies_p_151 = sp.vstack((sp.hstack((sp.zeros((4, 4)), sp.vstack((frequencies_intermediate_151, sp.zeros(3))))), sp.hstack((-frequencies_intermediate_151.T, sp.zeros((3, 4))))))
+frequencies_p_151 = sp.vstack((sp.hstack((sp.zeros((4, 4)), sp.vstack((frequencies_intermediate_151, sp.zeros(3))))),
+                               sp.hstack((-frequencies_intermediate_151.T, sp.zeros((3, 4))))))
 
-detunings_p = sp.linspace(-10 * gamma, 10 * gamma, 100)
-# dipole_operator_p = 0.063 * muB * sp.asarray([[0, 0, 0, 0, sp.sqrt(0.03), sp.sqrt(0.22), sp.sqrt(0.75)],
-#                                               [0, 0, 0, 0, sp.sqrt(0.12), sp.sqrt(0.68), sp.sqrt(0.2)],
-#                                               [0, 0, 0, 0, sp.sqrt(0.85), sp.sqrt(0.1), sp.sqrt(0.05)],
-#                                               [0, 0, 0, 0, 0, 0, 0],
-#                                               [sp.sqrt(0.03), sp.sqrt(0.12), sp.sqrt(0.85), 0, 0, 0, 0],
-#                                               [sp.sqrt(0.22), sp.sqrt(0.68), sp.sqrt(0.10), 0, 0, 0, 0],
-#                                               [sp.sqrt(0.75), sp.sqrt(0.2), sp.sqrt(0.05), 0, 0, 0, 0]])
+
 dipole_operator_p = 0.063 * muB * sp.asarray([[0, 0, 0, 0, sp.sqrt(0.85), sp.sqrt(0.1), sp.sqrt(0.05)],
                                               [0, 0, 0, 0, sp.sqrt(0.12), sp.sqrt(0.68), sp.sqrt(0.2)],
                                               [0, 0, 0, 0, sp.sqrt(0.03), sp.sqrt(0.22), sp.sqrt(0.75)],
@@ -89,43 +77,53 @@ dipole_operator_p = 0.063 * muB * sp.asarray([[0, 0, 0, 0, sp.sqrt(0.85), sp.sqr
                                               [sp.sqrt(0.10), sp.sqrt(0.68), sp.sqrt(0.22), 0, 0, 0, 0],
                                               [sp.sqrt(0.05), sp.sqrt(0.2), sp.sqrt(0.75), 0, 0, 0, 0]])
 
-# frequencies_c = sp.asarray([[0, 0, 0], [0, 0, 0], [0, 0, 0]])
-# dipole_operator_c = a0 * e_charge * sp.asarray([[0, 0, 0], [0, 0, 1], [0, 1, 0]])
-
 # Simulation parameters _________________________
-dt = 1e-9
-nt = 2100
+dt = 1e-10
+nt = 21000
 the_times = sp.linspace(0, nt * dt, nt, endpoint=False)
 
 # Objects _____________________________________________________________________
 the_atom_153 = atom(initial_state, decay_matrix, decay_to)
 the_hamiltonian_p_153 = hamiltonian_construct(dipole_operator_p, field_amplitude_p, frequencies_p_153)
-# the_hamiltonian_c = hamiltonian_construct(dipole_operator_c, field_amplitude_c, frequencies_c)
 the_simulation_153 = single_atom_simulation(the_atom_153, [the_hamiltonian_p_153], nt, dt)
-inhomogeneously_broadened_simulation_153 = inhomogeneous_broadening(the_simulation_153, ib_linewidth, number_of_atoms)
 
 the_atom_151 = atom(initial_state, decay_matrix, decay_to)
 the_hamiltonian_p_151 = hamiltonian_construct(dipole_operator_p, field_amplitude_p, frequencies_p_151)
-# the_hamiltonian_c = hamiltonian_construct(dipole_operator_c, field_amplitude_c, frequencies_c)
 the_simulation_151 = single_atom_simulation(the_atom_151, [the_hamiltonian_p_151], nt, dt)
-inhomogeneously_broadened_simulation_151 = inhomogeneous_broadening(the_simulation_151, ib_linewidth, number_of_atoms)
 
 # Run the simulation __________________________________________________________
-t11 = time.time()
-the_flop_153 = inhomogeneously_broadened_simulation_153.broadened_time_evolution()
-the_flop_151 = inhomogeneously_broadened_simulation_151.broadened_time_evolution()
-the_flop = (the_flop_151 + the_flop_153) / 2
-# the_susceptibility = the_simulation.susceptibility(detunings_p)
-print("Time elapsed = " + str(round(time.time() - t11, 4)) + " seconds")
-print("Rabi frequency =", Rabi, "MHz; Rabi period =", round(1 / Rabi * 1e6, 3), "microseconds")
+def evolve_153(re, im, detuning):
+    return the_simulation_153.time_evolution(re, im, detuning)
 
-# Save dat shit _______________________________________________________________
-loc = file_manager("test")#Seven_Level_Inhomogeneously_Broadened")
-populations_plot(the_times * 1e6, the_flop, loc)
-crystal_pop_compare(the_times * 1e6, the_flop, loc)
-coherence_plot(the_times * 1e6, the_flop, loc)
-ground_v_excited_7(the_times * 1e6, the_flop, loc)
-total_coherence_7(the_times * 1e6, the_flop, loc)
-shutil.copy("Crystal_Simulation.py", loc)
-sp.save(loc + "/data.txt", the_flop)  # This could be a pretty big file
-sp.save(loc + "/times.txt", the_times)
+def evolve_151(re, im, detuning):
+    return the_simulation_151.time_evolution(re, im, detuning)
+
+if __name__ == "__main__":
+    t11 = time.time()
+    the_detunings = sp.linspace(-ib_linewidth / 2, ib_linewidth / 2, number_of_atoms)
+    re = mp.Array('d', nt * 7 * 7)
+    im = mp.Array('d', nt * 7 * 7)
+
+    for i in the_detunings:
+        p_153 = mp.Process(target=evolve_153, args=(re, im, i))
+        p_151 = mp.Process(target=evolve_151, args=(re, im, i))
+        p_153.start()
+        p_151.start()
+    p_153.join()
+    p_151.join()
+    the_flop = sp.reshape(sp.asarray([i + 1j * j for i, j in zip(re[:], im[:])],
+                                dtype=complex) / (2 * number_of_atoms), (nt, 7, 7))
+
+    print("Time elapsed = " + str(round(time.time() - t11, 4)) + " seconds")
+    print("Rabi frequency =", Rabi, "MHz; Rabi period =", round(1 / Rabi * 1e6, 3), "microseconds")
+
+    # Save dat shit _______________________________________________________________
+    loc = file_manager("test")#Seven_Level_Inhomogeneously_Broadened")
+    populations_plot(the_times * 1e6, the_flop, loc)
+    crystal_pop_compare(the_times * 1e6, the_flop, loc)
+    coherence_plot(the_times * 1e6, the_flop, loc)
+    ground_v_excited_7(the_times * 1e6, the_flop, loc)
+    total_coherence_7(the_times * 1e6, the_flop, loc)
+    # shutil.copy("Crystal_Simulation.py", loc)
+    sp.save(loc + "/data.txt", the_flop)  # This could be a pretty big file
+    sp.save(loc + "/times.txt", the_times)

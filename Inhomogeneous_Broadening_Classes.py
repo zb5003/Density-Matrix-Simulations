@@ -32,10 +32,7 @@ class inhomogeneous_broadening:
             self.sing_sim.reset_state()
             self.detune(i)
             t1 = time.time()
-            for index_j, j in enumerate(times):
-                time_dep_state[index_j] = time_dep_state[index_j] \
-                                      + self.sing_sim.system.evolve_step(self.sing_sim.evolver(j), self.sing_sim.dt).copy() * \
-                                        sp.exp(-1j * (self.sing_sim.ham_obj[0].freq) * j)
+            time_dep_state = time_dep_state + self.sing_sim.time_evolution()
             print("Atom number =",index_i, "Detuning =", round(i / 1e6, 4), "MHz",
                   "Time elapsed =", str(round(time.time() - t1, 4)), "seconds")
 
