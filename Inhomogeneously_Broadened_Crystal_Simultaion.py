@@ -104,13 +104,28 @@ if __name__ == "__main__":
     re = mp.Array('d', nt * 7 * 7)
     im = mp.Array('d', nt * 7 * 7)
 
-    for i in the_detunings:
-        p_153 = mp.Process(target=evolve_153, args=(re, im, i))
-        p_151 = mp.Process(target=evolve_151, args=(re, im, i))
+    n_cores = mp.cpu_count() - 1
+    n_detunings = len(the_detunings)
+    n_thread_packs = int(n_detunings / n_cores)
+    leftover = n_detunings - n_thread_packs
+
+    for i in range(n_thread_packs):
+        for j in range(8):
+            p_153 = mp.Process(target=evolve_153, args=(re, im, the_detunings[i + j]))
+            p_151 = mp.Process(target=evolve_151, args=(re, im, the_detunings[i + j]))
+            p_153.start()
+            p_151.start()
+        p_153.join()
+        p_151.join()
+
+    for i in range(leftover):
+        p_153 = mp.Process(target=evolve_153, args=(re, im, the_detunings[-1 - i]))
+        p_151 = mp.Process(target=evolve_151, args=(re, im, the_detunings[-1 - i]))
         p_153.start()
         p_151.start()
     p_153.join()
     p_151.join()
+
     the_flop = sp.reshape(sp.asarray([i + 1j * j for i, j in zip(re[:], im[:])],
                                 dtype=complex) / (2 * number_of_atoms), (nt, 7, 7))
 

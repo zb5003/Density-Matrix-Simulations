@@ -48,3 +48,9 @@ class inhomogeneous_broadening:
         self.sing_sim.ham_obj[0].freq = self.sing_sim.freq_default + self.sing_sim.mask * detuning
 
         return None
+
+    def broadened_susceptibility(self):
+        """
+        
+        :return: 
+        """

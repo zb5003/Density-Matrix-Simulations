@@ -102,7 +102,7 @@ class hamiltonian_construct:
         :param t: Time.
         :return: Relative field amplitude at time t.
         """
-        return 1 / (1 + sp.exp(-(t - self.tau_0) / self.tau))
+        return 1 #/ (1 + sp.exp(-(t - self.tau_0) / self.tau))
 
     def hamiltonian(self, t):
         """
@@ -158,7 +158,7 @@ class single_atom_simulation:
         self.ham_obj[0].freq = self.freq_default + self.mask * detuning
         return None
 
-    def final_state(self):
+    def final_state_serial(self):
         """
         Calculate the state of the system after nt timesteps of size dt.
         :return: The final state of the system (matrix).
