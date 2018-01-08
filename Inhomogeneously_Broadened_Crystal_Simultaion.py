@@ -6,10 +6,10 @@ import time
 import matplotlib.pyplot as plt
 import shutil
 import multiprocessing as mp
-from density_matrix_classes.Atomic_Simulation_Classes import *
-from density_matrix_classes.Inhomogeneous_Broadening_Classes import *
-from density_matrix_classes.Data_Saving_Functions import *
-from density_matrix_classes.physicalconstants import *
+from Atomic_Simulation_Classes import *
+from Inhomogeneous_Broadening_Classes import *
+from Data_Saving_Functions import *
+from physicalconstants import *
 
 # Atomic parameters _____________________________
 n = 1.8
@@ -42,8 +42,8 @@ decay_to = sp.asarray([[0, 0, 0, sp.sqrt(gamma_slow / 3), 0, 0, 0],
                        [0, 0, 0, 0, 0, 0, 0],
                        [0, 0, 0, 0, 0, 0, 0]])
 
-number_of_atoms = 10
-ib_linewidth = 2 * sp.pi * 1e9
+number_of_atoms = 10 #40000
+ib_linewidth = 2 * sp.pi * 1e9 * 0 #number_of_atoms * 25000
 
 # Beam parameters _______________________________
 power_p = 277e-3
@@ -78,7 +78,7 @@ dipole_operator_p = 0.063 * muB * sp.asarray([[0, 0, 0, 0, sp.sqrt(0.85), sp.sqr
                                               [sp.sqrt(0.05), sp.sqrt(0.2), sp.sqrt(0.75), 0, 0, 0, 0]])
 
 # Simulation parameters _________________________
-dt = 0.5e-10
+dt = 1e-10
 nt = 21000
 the_times = sp.linspace(0, nt * dt, nt, endpoint=False)
 
@@ -104,28 +104,13 @@ if __name__ == "__main__":
     re = mp.Array('d', nt * 7 * 7)
     im = mp.Array('d', nt * 7 * 7)
 
-    n_cores = mp.cpu_count() - 1
-    n_detunings = len(the_detunings)
-    n_thread_packs = int(n_detunings / n_cores)
-    leftover = n_detunings - n_thread_packs
-
-    for i in range(n_thread_packs):
-        for j in range(8):
-            p_153 = mp.Process(target=evolve_153, args=(re, im, the_detunings[i + j]))
-            p_151 = mp.Process(target=evolve_151, args=(re, im, the_detunings[i + j]))
-            p_153.start()
-            p_151.start()
-        p_153.join()
-        p_151.join()
-
-    for i in range(leftover):
-        p_153 = mp.Process(target=evolve_153, args=(re, im, the_detunings[-1 - i]))
-        p_151 = mp.Process(target=evolve_151, args=(re, im, the_detunings[-1 - i]))
+    for i in the_detunings:
+        p_153 = mp.Process(target=evolve_153, args=(re, im, i))
+        p_151 = mp.Process(target=evolve_151, args=(re, im, i))
         p_153.start()
         p_151.start()
     p_153.join()
     p_151.join()
-
     the_flop = sp.reshape(sp.asarray([i + 1j * j for i, j in zip(re[:], im[:])],
                                 dtype=complex) / (2 * number_of_atoms), (nt, 7, 7))
 

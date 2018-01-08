@@ -5,9 +5,9 @@ import scipy as sp
 import time
 import matplotlib.pyplot as plt
 import shutil
-from Atomic_Simulation_Classes import *
-from Data_Saving_Functions import *
-from physicalconstants import *
+from density_matrix_classes.Atomic_Simulation_Classes import *
+from density_matrix_classes.Data_Saving_Functions import *
+from density_matrix_classes.physicalconstants import *
 
 # Atomic parameters _____________________________
 n = 1.8
@@ -84,7 +84,7 @@ the_simulation = single_atom_simulation(the_atom, [the_hamiltonian_p], nt, dt)
 
 # Run the simulation __________________________________________________________
 t1 = time.time()
-the_flop = the_simulation.time_evolution()
+the_flop = the_simulation.time_evolution_serial()
 # the_susceptibility = the_simulation.susceptibility(detunings_p)
 print("Time elapsed = " + str(round(time.time() - t1, 4)) + " seconds")
 

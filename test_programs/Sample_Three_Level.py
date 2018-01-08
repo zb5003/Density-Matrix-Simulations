@@ -4,8 +4,8 @@ All units are in SI.
 import scipy as sp
 import time
 import matplotlib.pyplot as plt
-from Atomic_Simulation_Classes import *
-from physicalconstants import *
+from density_matrix_classes.Atomic_Simulation_Classes import *
+from density_matrix_classes.physicalconstants import *
 
 # Atomic parameters
 n = 1.8
