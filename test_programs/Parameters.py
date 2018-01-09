@@ -48,10 +48,8 @@ decay_to = sp.asarray([[0, 0, 0, sp.sqrt(gamma_slow / 3), 0, 0, 0],
                        [0, 0, 0, 0, 0, 0, 0],
                        [0, 0, 0, 0, 0, 0, 0]])
 
-number_of_151 = 1
-number_of_153 = 1
-number_of_atoms = [number_of_151, number_of_153]
-ib_linewidth = 0
+number_of_atoms = 60
+ib_linewidth = 2 * sp.pi * number_of_atoms * 25000  # In Hz
 
 # Beam parameters
 power = 277e-3
@@ -63,10 +61,9 @@ field_amplitude = sp.sqrt(4 * mu0 * n_refraction * power / (c * sp.pi * waist**2
 detuning = 0
 lower_spacing_153 = sp.asarray([148 * 10**6, 76.4 * 10**6], dtype=sp.float64)
 upper_spacing_153 = sp.asarray([183 * 10**6, 114 * 10**6], dtype=sp.float64)
-lower_spacing_151 = 2 * sp.pi * sp.asarray([57.3 * 10**6, 29.5 * 10**6], dtype=sp.float64)
-upper_spacing_151 = 2 * sp.pi * sp.asarray([71 * 10**6, 43 * 10**6], dtype=sp.float64)
-frequencies = [frequency_matrix_generator(detuning, lower_spacing_151, upper_spacing_151),
-               frequency_matrix_generator(detuning, lower_spacing_153, upper_spacing_153)]
+# lower_spacing_151 = 2 * sp.pi * sp.asarray([57.3 * 10**6, 29.5 * 10**6], dtype=sp.float64)
+# upper_spacing_151 = 2 * sp.pi * sp.asarray([71 * 10**6, 43 * 10**6], dtype=sp.float64)
+frequencies = frequency_matrix_generator(detuning, lower_spacing_153, upper_spacing_153)
 detunings = sp.linspace(-10 * gamma, 10 * gamma, 100)
 dipole_operator = 0.063 * muB * sp.asarray([[0, 0, 0, 0, sp.sqrt(0.03), sp.sqrt(0.22), sp.sqrt(0.75)],
                                             [0, 0, 0, 0, sp.sqrt(0.12), sp.sqrt(0.68), sp.sqrt(0.2)],
