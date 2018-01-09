@@ -19,8 +19,7 @@ the_simulation = single_atom_simulation(the_atom, [the_hamiltonian_p], nt, dt)
 t1 = time.time()
 the_flop = the_simulation.time_evolution_serial()
 print("Time elapsed = " + str(round(time.time() - t1, 4)) + " seconds")
-print(frequencies)
-print(frequency_matrix_generator(detuning, lower_spacing, upper_spacing))
+
 # Save dat shit _______________________________________________________________
 loc = file_manager(filename)
 populations_plot(the_times * 1e6, the_flop, loc)
