@@ -102,7 +102,7 @@ class hamiltonian_construct:
         :param t: Time.
         :return: Relative field amplitude at time t.
         """
-        return 1 #/ (1 + sp.exp(-(t - self.tau_0) / self.tau))
+        return 1 / (1 + sp.exp(-(t - self.tau_0) / self.tau))
 
     def hamiltonian(self, t):
         """
