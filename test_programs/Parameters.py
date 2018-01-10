@@ -48,10 +48,10 @@ decay_to = sp.asarray([[0, 0, 0, sp.sqrt(gamma_slow / 3), 0, 0, 0],
                        [0, 0, 0, 0, 0, 0, 0],
                        [0, 0, 0, 0, 0, 0, 0]])
 
-n_151 = 0
-n_153 = 1
+n_151 = 100
+n_153 = 100
 number_of_atoms = [n_151, n_153]
-ib_linewidth = 2 * sp.pi * sum(number_of_atoms) * 25000  # In Hz
+ib_linewidth = 2 * sp.pi * sum(number_of_atoms) * 2500000  # In Hz
 
 # Beam parameters
 power = 277e-3

@@ -11,6 +11,8 @@ from density_matrix_classes.Atomic_Simulation_Classes import *
 from density_matrix_classes.Data_Saving_Functions import *
 from density_matrix_classes.physicalconstants import *
 
+loc = file_manager(filename)
+shutil.copy("Parameters.py", loc)
 the_flop = sp.zeros((nt, *sp.shape(initial_state)), dtype=complex)
 
 for index in range(len(number_of_atoms)):
@@ -27,14 +29,12 @@ for index in range(len(number_of_atoms)):
         t1 = time.time()
         the_flop = the_flop + the_simulation.broadened_time_evolution()
         print("Time elapsed = " + str(round(time.time() - t1, 4)) + " seconds")
-the_flop = the_flop / sum(number_of_atoms)
+
 # Save dat shit _______________________________________________________________
-loc = file_manager(filename)
 populations_plot(the_times * 1e6, the_flop, loc)
 crystal_pop_compare(the_times * 1e6, the_flop, loc)
 coherence_plot(the_times * 1e6, the_flop, loc)
 total_coherence_7(the_times * 1e6, the_flop, loc)
-shutil.copy("Parameters.py", loc)
 sp.save(loc + "/data.txt", the_flop)
 sp.save(loc + "/times.txt", the_times)
 

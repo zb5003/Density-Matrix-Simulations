@@ -32,9 +32,9 @@ class inhomogeneous_broadening:
         time_dep_state = sp.zeros((self.sing_sim.nt, dim1, dim2), dtype=complex)
         for index_i, i in enumerate(self.detunings):
             self.sing_sim.reset_state()
-            self.detune(i)
+            # self.detune(i)
             t1 = time.time()
-            time_dep_state = time_dep_state + self.sing_sim.time_evolution_serial()
+            time_dep_state = time_dep_state + self.sing_sim.time_evolution_serial(i)
             print("Atom number =",index_i, "Detuning =", round(i / 1e6, 4), "MHz",
                   "Time elapsed =", str(round(time.time() - t1, 4)), "seconds")
 
