@@ -24,6 +24,7 @@ def frequency_matrix_generator(detuning, lower, upper):
 filename = "Seven_Level"
 
 n_refraction = 1.8
+n_states = 7
 initial_state = sp.asarray([[1 / 3, 0, 0, 0, 0, 0, 0],
                             [0, 1 / 3, 0, 0, 0, 0, 0],
                             [0, 0, 1 / 3, 0, 0, 0, 0],
@@ -48,10 +49,11 @@ decay_to = sp.asarray([[0, 0, 0, sp.sqrt(gamma_slow / 3), 0, 0, 0],
                        [0, 0, 0, 0, 0, 0, 0],
                        [0, 0, 0, 0, 0, 0, 0]])
 
-n_151 = 100
-n_153 = 100
+n_151 = 400
+n_153 = 400
 number_of_atoms = [n_151, n_153]
-ib_linewidth = 2 * sp.pi * sum(number_of_atoms) * 2500000  # In Hz
+n_total = sum(number_of_atoms)
+ib_linewidth = 2 * sp.pi * n_total * 2500000  # In Hz
 
 # Beam parameters
 power = 277e-3
@@ -79,6 +81,6 @@ dipole_operator = 0.063 * muB * sp.asarray([[0, 0, 0, 0, sp.sqrt(0.03), sp.sqrt(
 Rabi_f = a0 * e_charge * field_amplitude / hbar
 
 # Simulation parameters
-dt = 1e-9
-nt = 3000
+dt = 1e-10
+nt = 15000
 the_times = sp.linspace(0, nt * dt, nt, endpoint=False)

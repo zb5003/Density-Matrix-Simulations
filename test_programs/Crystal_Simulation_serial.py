@@ -15,6 +15,7 @@ loc = file_manager(filename)
 shutil.copy("Parameters.py", loc)
 the_flop = sp.zeros((nt, *sp.shape(initial_state)), dtype=complex)
 
+t1 = time.time()
 for index in range(len(number_of_atoms)):
     if number_of_atoms[index] == 0:
         pass
@@ -26,9 +27,11 @@ for index in range(len(number_of_atoms)):
         the_simulation = inhomogeneous_broadening(single_simulation, ib_linewidth, number_of_atoms[index])
 
         # Run the simulation __________________________________________________________
-        t1 = time.time()
         the_flop = the_flop + the_simulation.broadened_time_evolution()
-        print("Time elapsed = " + str(round(time.time() - t1, 4)) + " seconds")
+
+print("Time elapsed = " + str(round(time.time() - t1, 4)) + " seconds")
+
+the_flop = the_flop / sp.count_nonzero(number_of_atoms)
 
 # Save dat shit _______________________________________________________________
 populations_plot(the_times * 1e6, the_flop, loc)

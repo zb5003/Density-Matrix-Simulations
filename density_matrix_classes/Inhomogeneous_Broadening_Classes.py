@@ -1,5 +1,4 @@
 import scipy as sp
-import time
 from density_matrix_classes.Atomic_Simulation_Classes import *
 
 class inhomogeneous_broadening:
@@ -33,10 +32,7 @@ class inhomogeneous_broadening:
         for index_i, i in enumerate(self.detunings):
             self.sing_sim.reset_state()
             # self.detune(i)
-            t1 = time.time()
-            time_dep_state = time_dep_state + self.sing_sim.time_evolution_serial(i)
-            print("Atom number =",index_i, "Detuning =", round(i / 1e6, 4), "MHz",
-                  "Time elapsed =", str(round(time.time() - t1, 4)), "seconds")
+            time_dep_state = time_dep_state + self.sing_sim.time_evolution(i)
 
         return time_dep_state / self.n_atoms
 

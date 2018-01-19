@@ -68,5 +68,3 @@ def time_evolve(Hamiltonian, Gamma, rho, closed, dt, nt):
         temp = RK_rho(Hamiltonian(i * dt), Gamma, rho, closed, dt)
         rho = temp
     return rho
-
-

@@ -198,11 +198,12 @@ class single_atom_simulation:
 
         return chi
 
-    def time_evolution_serial(self, detuning=0):
+    def time_evolution(self, detuning=0):
         """
         Calculate the state of the system at each of the nt time steps of size dt.
         :return: The state at ever timestep of the simulation.
         """
+        t1 = time.time()
         self.detune(detuning)
         row, column = sp.shape(self.system.initial_state)
         times = sp.linspace(0, self.duration, self.nt, endpoint=False)
@@ -212,30 +213,7 @@ class single_atom_simulation:
             time_dep_state[index] = self.system.evolve_step(self.evolver(i),
                                                             self.dt).copy() * \
                                                sp.exp(-1j * self.ham_obj[0].freq * i)
+        t2 = time.time() - t1
+        print("Detuning =", round(detuning / 1e6, 4), "MHz", "Time elapsed =", str(round(t2, 4)), "seconds")
 
         return time_dep_state
-
-    def time_evolution(self, re, im, detuning=0):
-        """
-        Calculate the state of the system at each of the nt time steps of size dt.
-        :return: The state at ever timestep of the simulation.
-        """
-        self.detune(detuning)
-        row, column = sp.shape(self.system.initial_state)
-        times = sp.linspace(0, self.duration, self.nt, endpoint=False)
-        time_dep_state = sp.zeros((self.nt, row, column), dtype=complex)
-
-        t1 = time.time()
-        for index, i in enumerate(times):
-            time_dep_state[index] = self.system.evolve_step(self.evolver(i),
-                                                            self.dt).copy() * \
-                                               sp.exp(-1j * self.ham_obj[0].freq * i)
-
-        print("Detuning =", round(detuning / 1e6, 4), "MHz",
-              "Time elapsed =", str(round(time.time() - t1, 4)), "seconds")  # "Atom number =",index_i,
-        # A queue might fix the printing problem
-
-        re[:] = [i + j for i, j in zip(re[:], sp.reshape(time_dep_state.real, self.nt * row * column))]
-        im[:] = [i + j for i, j in zip(im[:], sp.reshape(time_dep_state.imag, self.nt * row * column))]
-
-        return None
