@@ -39,7 +39,7 @@ if __name__ == "__main__":
             the_detunings = sp.linspace(-parameters.ib_linewidth / 2, parameters.ib_linewidth / 2, parameters.number_of_atoms[index])
 
             # Run the simulation __________________________________________________________
-            with Pool(mp.cpu_count()-1) as p:
+            with Pool(mp.cpu_count()) as p:
                 for j in the_detunings:
                     p.apply_async(evolve, args=(index, j), callback=cb)
                 p.close()

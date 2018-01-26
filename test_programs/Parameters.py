@@ -49,8 +49,10 @@ decay_to = sp.asarray([[0, 0, 0, sp.sqrt(gamma_slow / 3), 0, 0, 0],
                        [0, 0, 0, 0, 0, 0, 0],
                        [0, 0, 0, 0, 0, 0, 0]])
 
-n_151 = 400
-n_153 = 400
+ionic_density = 9.35e24  # /m^3
+n_151 = 800
+n_153 = 800
+isotope_names = ['151', '153']
 number_of_atoms = [n_151, n_153]
 n_total = sum(number_of_atoms)
 ib_linewidth = 2 * sp.pi * n_total * 2500000  # In Hz
@@ -81,6 +83,6 @@ dipole_operator = 0.063 * muB * sp.asarray([[0, 0, 0, 0, sp.sqrt(0.03), sp.sqrt(
 Rabi_f = a0 * e_charge * field_amplitude / hbar
 
 # Simulation parameters
-dt = 1e-10
-nt = 15000
+dt = 0.5e-9
+nt = 10000
 the_times = sp.linspace(0, nt * dt, nt, endpoint=False)

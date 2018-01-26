@@ -158,7 +158,7 @@ class single_atom_simulation:
         self.ham_obj[0].freq = self.freq_default + self.mask * detuning
         return None
 
-    def final_state_serial(self):
+    def final_state(self):
         """
         Calculate the state of the system after nt timesteps of size dt.
         :return: The final state of the system (matrix).
@@ -192,7 +192,7 @@ class single_atom_simulation:
         chi = sp.zeros((len(detunings), dim1, dim2), dtype=complex)
 
         for index, i in enumerate(detunings):
-            self.detune()
+            self.detune(i)
             chi[index] = self.final_state()
             self.reset_state()
 
