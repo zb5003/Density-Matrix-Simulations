@@ -49,7 +49,7 @@ decay_to = sp.asarray([[0, 0, 0, sp.sqrt(gamma_slow / 3), 0, 0, 0],
                        [0, 0, 0, 0, 0, 0, 0],
                        [0, 0, 0, 0, 0, 0, 0]])
 
-ionic_density = 9.35e24  # /m^3
+ionic_density = 9.35e24  # /m^3import
 n_151 = 800
 n_153 = 800
 isotope_names = ['151', '153']
