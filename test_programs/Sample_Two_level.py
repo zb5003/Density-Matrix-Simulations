@@ -59,7 +59,7 @@ inhomogeneously_broadened_simulation = inhomogeneous_broadening(the_simulation, 
 # Run the simulation
 t1 = time.time()
 # the_flop = inhomogeneously_broadened_simulation.broadened_time_evolution()
-the_flop = the_simulation.time_evolution_serial(detuning)
+the_flop = the_simulation.time_evolution(detuning)
 # the_susceptibility = the_simulation.susceptibility(detunings_p)
 print("Time elapsed = " + str(round(time.time() - t1, 4)) + " seconds")
 

@@ -5,7 +5,7 @@ import scipy as sp
 import time
 import matplotlib.pyplot as plt
 import shutil
-from test_programs.Parameters import *
+from test_programs.Parameters_seven import *
 from density_matrix_classes.Inhomogeneous_Broadening_Classes import *
 from density_matrix_classes.Atomic_Simulation_Classes import *
 from density_matrix_classes.Data_Saving_Functions import *

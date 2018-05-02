@@ -83,6 +83,6 @@ dipole_operator = 0.063 * muB * sp.asarray([[0, 0, 0, 0, sp.sqrt(0.03), sp.sqrt(
 Rabi_f = a0 * e_charge * field_amplitude / hbar
 
 # Simulation parameters
-dt = 0.5e-9
-nt = 10000
+dt = 1e-10
+nt = 15000
 the_times = sp.linspace(0, nt * dt, nt, endpoint=False)
