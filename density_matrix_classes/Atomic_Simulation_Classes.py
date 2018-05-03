@@ -34,12 +34,14 @@ class atom:
         dim3 = sp.count_nonzero(dec_to_mat)
         c = sp.zeros((dim3, dim1, dim2))
         c_T = sp.zeros((dim3, dim1, dim2))
-        for k in range(dim3):
-            for i in range(dim1 - 1):
-                for j in range(i + 1, dim1):
-                    if dec_to_mat[i, j] != 0:
-                        c[k, i, j] = dec_to_mat[i, j]
-                        c_T[k, j, i] = dec_to_mat[i, j]
+        k = 0
+        for i in range(dim1 - 1):
+            for j in range(i + 1, dim1):
+                if dec_to_mat[i, j] != 0:
+                    c[k, i, j] = dec_to_mat[i, j]
+                    c_T[k, j, i] = dec_to_mat[i, j]
+                    k = k + 1
+        # print(c, c_T)
         return c, c_T
 
     def evolve_step(self,

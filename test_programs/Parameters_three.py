@@ -27,11 +27,11 @@ n_states = 3
 initial_state = sp.asarray([[1, 0, 0], [0, 0, 0], [0, 0, 0]], dtype=complex)
 
 gamma = 2 * sp.pi * 2e6
-gamma_slow = 2 * sp.pi * 1e5 * 0
+gamma_slow = 2 * sp.pi * 1e6
 decay_matrix = sp.asarray([[0, 0, 0], [0, gamma_slow, 0], [0, 0, gamma]])
 
-decay_to = sp.asarray([[0, sp.sqrt(gamma_slow), sp.sqrt(gamma)],
-                       [0, 0, 0],
+decay_to = sp.asarray([[0, 0, sp.sqrt(gamma / 2)],
+                       [0, 0, sp.sqrt(gamma / 2)],
                        [0, 0, 0]])
 
 ionic_density = 9.35e24  # /m^3import
@@ -62,16 +62,15 @@ upper_spacing = []
 detuning_p = 0
 frequencies_p = frequency_matrix_generator(detuning_p, lower_spacing, upper_spacing)  # sp.asarray([[0, 0, detuning_p], [0, 0, 0], [-detuning_p, 0, 0]])
 detunings_p = sp.linspace(-5 * gamma, 5 * gamma, 300)
-dipole_operator_p = a0 * e_charge * sp.asarray([[0, 0, 1], [0, 0, 0], [1, 0, 0]])
-print(frequencies_p)
+dipole_operator_p = a0 * e_charge * sp.asarray([[0, 0, 1], [0, 0, 1], [1, 1, 0]])
+
 
 detuning_c = 100e6
 frequencies_c = frequency_matrix_generator(detuning_c, lower_spacing, upper_spacing)
 dipole_operator_c = a0 * e_charge * sp.asarray([[0, 0, 0], [0, 0, 1], [0, 1, 0]])
-print(frequencies_c)
+
 
 # Simulation parameters
 dt = 1 / (10 * max([Rabi_c, Rabi_p, detuning_p, detuning_c]))
-nt = int((10 * (2 * sp.pi) / gamma) / dt)
-print(dt * 1e9, nt)
+nt = 5000 #int((10 * (2 * sp.pi) / gamma) / dt)
 the_times = sp.linspace(0, nt * dt, nt, endpoint=False)
