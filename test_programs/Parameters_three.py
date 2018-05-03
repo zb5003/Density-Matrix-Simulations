@@ -27,7 +27,7 @@ n_states = 3
 initial_state = sp.asarray([[1, 0, 0], [0, 0, 0], [0, 0, 0]], dtype=complex)
 
 gamma = 2 * sp.pi * 2e6
-gamma_slow = 2 * sp.pi * 1e6
+gamma_slow = 2 * sp.pi * 1e6 * 0
 decay_matrix = sp.asarray([[0, 0, 0], [0, gamma_slow, 0], [0, 0, gamma]])
 
 decay_to = sp.asarray([[0, 0, sp.sqrt(gamma / 2)],
@@ -43,13 +43,13 @@ n_total = sum(number_of_atoms)
 ib_linewidth = 2 * sp.pi * n_total * 2500000  # In Hz
 
 # Beam parameters
-power_p = 0.01
+power_p = 0.0001
 waist_p = 2000e-6
 intensity_p = power_p / (2 * sp.pi * waist_p**2)
 field_amplitude_p = sp.sqrt(2 * intensity_p / (n_refraction * epsilon0 * c))
 Rabi_p = a0 * e_charge * field_amplitude_p / hbar
 
-power_c = 0.005
+power_c = 0.0005
 waist_c = 2000e-6
 intensity_c = power_c / (2 * sp.pi * waist_c**2)
 field_amplitude_c = sp.sqrt(2 * intensity_c / (n_refraction * epsilon0 * c))
@@ -62,7 +62,7 @@ upper_spacing = []
 detuning_p = 0
 frequencies_p = frequency_matrix_generator(detuning_p, lower_spacing, upper_spacing)  # sp.asarray([[0, 0, detuning_p], [0, 0, 0], [-detuning_p, 0, 0]])
 detunings_p = sp.linspace(-5 * gamma, 5 * gamma, 300)
-dipole_operator_p = a0 * e_charge * sp.asarray([[0, 0, 1], [0, 0, 1], [1, 1, 0]])
+dipole_operator_p = a0 * e_charge * sp.asarray([[0, 0, 1], [0, 0, 0], [1, 0, 0]])
 
 
 detuning_c = 100e6
@@ -72,5 +72,6 @@ dipole_operator_c = a0 * e_charge * sp.asarray([[0, 0, 0], [0, 0, 1], [0, 1, 0]]
 
 # Simulation parameters
 dt = 1 / (10 * max([Rabi_c, Rabi_p, detuning_p, detuning_c]))
-nt = 5000 #int((10 * (2 * sp.pi) / gamma) / dt)
+nt = int((10 * (2 * sp.pi) / gamma) / dt)
+print("Time step =", dt * 1e9, "; Number of time steps =", nt)
 the_times = sp.linspace(0, nt * dt, nt, endpoint=False)
