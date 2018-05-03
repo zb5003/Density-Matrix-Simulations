@@ -11,7 +11,7 @@ from test_programs.Parameters_three import *
 print(Rabi_p, Rabi_c)
 
 # Objects
-the_atom = atom(initial_state, decay_matrix, sp.zeros((3, 3)))
+the_atom = atom(initial_state, decay_matrix, decay_to)
 the_hamiltonian_p = hamiltonian_construct(dipole_operator_p, field_amplitude_p, frequencies_p)
 the_hamiltonian_c = hamiltonian_construct(dipole_operator_c, field_amplitude_c, frequencies_c)
 the_simulation = single_atom_simulation(the_atom, [the_hamiltonian_p, the_hamiltonian_c], nt, dt)
@@ -41,7 +41,7 @@ fig1, ax = plt.subplots(nrows=2, ncols=1)
 ax[0].plot(detunings_p / 1e6, the_susceptibility[:, 0, 2].real, label=r"$\Re[\chi]$")
 ax[0].axhline(0)
 ax[0].axvline(0)
-ax[1].plot(detunings_p / 1e6, the_susceptibility[:, 0, 2].imag, label=r"$10\times\Im[\chi]$")
+ax[1].plot(detunings_p / 1e6, -the_susceptibility[:, 0, 2].imag, label=r"$Im[\chi]$")
 ax[1].axhline(0)
 ax[1].axvline(0)
 plt.legend()
