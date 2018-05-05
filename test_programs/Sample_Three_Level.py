@@ -19,7 +19,7 @@ the_simulation = single_atom_simulation(the_atom, [the_hamiltonian_p, the_hamilt
 # Run the simulation
 t1 = time.time()
 the_flop = the_simulation.time_evolution()
-the_susceptibility = the_simulation.susceptibility(detunings_p)
+# the_susceptibility = the_simulation.susceptibility(detunings_p)
 print("Time elapsed = " + str(round(time.time() - t1, 4)) + " seconds")
 
 # Plot dat shit
@@ -37,14 +37,14 @@ ax[2].plot(the_times * 1e6, the_flop[:, 0, 1].real, label=r"$\Re[\rho_{12}]$")
 ax[2].plot(the_times * 1e6, the_flop[:, 0, 1].imag, label=r"$\Im[\rho_{12}]$")
 ax[2].legend()
 
-fig1, ax = plt.subplots(nrows=2, ncols=1)
-ax[0].plot(detunings_p / 1e6, the_susceptibility[:, 0, 2].real, label=r"$\Re[\chi]$")
-ax[0].axhline(0)
-ax[0].axvline(0)
-ax[1].plot(detunings_p / 1e6, -the_susceptibility[:, 0, 2].imag, label=r"$Im[\chi]$")
-ax[1].axhline(0)
-ax[1].axvline(0)
-plt.legend()
+# fig1, ax = plt.subplots(nrows=2, ncols=1)
+# ax[0].plot(detunings_p / 1e6, the_susceptibility[:, 0, 2].real, label=r"$\Re[\chi]$")
+# ax[0].axhline(0)
+# ax[0].axvline(0)
+# ax[1].plot(detunings_p / 1e6, -the_susceptibility[:, 0, 2].imag, label=r"$Im[\chi]$")
+# ax[1].axhline(0)
+# ax[1].axvline(0)
+# plt.legend()
 
 plt.show()
 

@@ -72,7 +72,7 @@ lower_spacing_153 = sp.asarray([148 * 10**6, 76.4 * 10**6], dtype=sp.float64)
 upper_spacing_153 = sp.asarray([183 * 10**6, 114 * 10**6], dtype=sp.float64)
 frequencies_153 = frequency_matrix_generator(detuning, lower_spacing_153, upper_spacing_153)
 frequencies = [frequencies_151, frequencies_153]
-print(frequencies_153)
+print(frequencies_153 / 1e6)
 detunings = sp.linspace(-10 * gamma, 10 * gamma, 100)
 dipole_operator = 0.063 * muB * sp.asarray([[0, 0, 0, 0, sp.sqrt(0.03), sp.sqrt(0.22), sp.sqrt(0.75)],
                                             [0, 0, 0, 0, sp.sqrt(0.12), sp.sqrt(0.68), sp.sqrt(0.2)],
