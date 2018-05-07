@@ -16,14 +16,13 @@ import functools
 def callback(result, accumulator):
     accumulator += result
 
-
 def evolve(index, detuning):
     # Objects _____________________________________________________________________
     the_atom = atom(parameters.initial_state, parameters.decay_matrix, parameters.decay_to)
     the_hamiltonian_p = hamiltonian_construct(parameters.dipole_operator, parameters.field_amplitude, parameters.frequencies[index])
     single_simulation = single_atom_simulation(the_atom, [the_hamiltonian_p], parameters.nt, parameters.dt)
     run = single_simulation.time_evolution(detuning)
-    return run
+    return run#, run[-1]
 
 if __name__ == "__main__":
     loc = file_manager(parameters.filename)

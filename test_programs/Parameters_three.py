@@ -1,13 +1,23 @@
 from density_matrix_classes.physicalconstants import *
 import scipy as sp
 
+def pulse_sequence(t, tau, tau_0):
+    return 1 / (1 + sp.exp(-(t - tau_0) / tau)) - 1 / (1 + sp.exp(-(t - tau_0 - 2e-6) / tau)) + 50 * (1 / (1 + sp.exp(-(t - tau_0 - 5e-6) / tau)) - 1 / (1 + sp.exp(-(t - tau_0 - 5e-6 - 1e-8) / tau)))
+
 def frequency_matrix_generator(detuning, lower, upper):
     """
-
-    :param detuning:
-    :param lower:
-    :param upper:
-    :return:
+    Create the frequency matrix for an atom with particular level splittings and a beam with a particular detuning.
+    The (i, j)th element of the matrix represents the detuning of the i to j transition from the beam.
+    The lower left of the matrix has negative frequencies for red detunings and positive frequencies for blue detunings.
+    The upper right is the opposite.
+    
+    By default the target transition is the lowest ground state level to the lowest excited state level.
+    The matrix elements corresponding to these transition will be zero for detuning=0.
+    :param detuning: Float. The detuning of the beam from the target transition. Negative for red transitions, positive for blue.
+    :param lower: List/Array.  Frequency splittings of the ground state. The first element is the splitting between the lowest two levels,
+                  the second element is the splitting between the second and third lowest states...
+    :param upper: List/Array. Same as lower except for the excited states.
+    :return: Array. This array contains the frequencies that the Hamiltonian matrix elements will oscillate at.
     """
     detuning = -detuning
     nrows = len(lower) + 1

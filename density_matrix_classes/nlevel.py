@@ -4,18 +4,18 @@ from density_matrix_classes.physicalconstants import *
 def commutator(M1, M2):
     """
     Calculates the commutator [M1, M2].
-    :param M1: First matrix.
-    :param M2: Second matrix.
-    :return: The commutator between M1 and M2 as a 2-D ndarray.
+    :param M1: Array (possible complex). First matrix.
+    :param M2: Array (possible complex). Second matrix.
+    :return: Array (possible complex). The commutator between M1 and M2 as a 2-D ndarray.
     """
     return sp.dot(M1, M2) - sp.dot(M2, M1)
 
 def anticommutator(M1, M2):
     """
     Calculates the anticommutator {M1, M2}.
-    :param M1: First matrix.
-    :param M2: Second matrix.
-    :return: The anticommutator between M1 and M2 as a 2-D ndarray.
+    :param M1: Array (possible complex). First matrix.
+    :param M2: Array (possible complex). Second matrix.
+    :return: Array (possible complex). The anticommutator between M1 and M2 as a 2-D ndarray.
     """
     return sp.dot(M1, M2) + sp.dot(M2, M1)
 
@@ -27,15 +27,13 @@ def rho_dot(Hamiltonian, Gamma, rho, closed):
         D[c] * rho = 1 / 2 * {c_dagger * c, rho}.
     Gamma is the decay rate and c are the transition matrices of the n level system. In practice c will be a sum of 
     multiple transition matrices.
+    The documentation also has some extra information.
+    For now only radiative decay is considered (no dephasing).
     
-    NOTE: 1.) For now only radiative decay is considered (no dephasing) and all levels have the same decay rate.
-          2.) The Lindblad operator does not include the term that adds population back in.  Therefore this function 
-              simulates open quantum systems
-    
-    :param Hamiltonian: Hamiltonian.
-    :param Gamma: Decay matrix.
-    :param rho: density matrix.
-    :return: Time derivative of the density matrix as a 2-D ndarray (dtype=complex).
+    :param Hamiltonian: Complex array. Hamiltonian.
+    :param Gamma: Array. Decay matrix.
+    :param rho: Complex array. density matrix.
+    :return: Complex array. Time derivative of the density matrix.
     """
     return -1j / hbar * commutator(Hamiltonian, rho) \
            - 1 / 2 * anticommutator(Gamma, rho) \
@@ -44,11 +42,11 @@ def rho_dot(Hamiltonian, Gamma, rho, closed):
 def RK_rho(Hamiltonian, Gamma, rho, closed, dt):
     """
     Calculates a single time step using the fourth order Runge-Kutta method.
-    :param Hamiltonian: Hamiltonian.
-    :param Gamma: Decay matrix.
-    :param rho: Density matrx.
-    :param dt: Time step.
-    :return: Density matrix after evolving for time dt as a 2-D ndarray (dtype=complex).
+    :param Hamiltonian: Complex array. Hamiltonian.
+    :param Gamma: Array. Decay matrix.
+    :param rho: Complex array. Density matrx.
+    :param dt: Float. Time step.
+    :return: Complex array. Density matrix after evolving for time dt.
     """
     F1 = dt * rho_dot(Hamiltonian, Gamma, rho, closed)
     F2 = dt * rho_dot(Hamiltonian, Gamma, rho + 1 / 2 * F1, closed)
@@ -59,10 +57,10 @@ def RK_rho(Hamiltonian, Gamma, rho, closed, dt):
 def time_evolve(Hamiltonian, Gamma, rho, closed, dt, nt):
     """
     Perform multiple time step evolutions starting with the initial density matrix self.Dens_i.
-    :param Hamiltonian: Hamiltonian.
-    :param dt: Time step.
-    :param nt: Number of time steps.
-    :return: Density matrix after evolving for many time steps as a 2-D ndarray (dtype=complex).
+    :param Hamiltonian: Complex array. Hamiltonian.
+    :param dt: Float. Time step.
+    :param nt: Int. Number of time steps.
+    :return: Complex array. Density matrix after evolving for many time steps.
     """
     for i in range(nt):
         temp = RK_rho(Hamiltonian(i * dt), Gamma, rho, closed, dt)

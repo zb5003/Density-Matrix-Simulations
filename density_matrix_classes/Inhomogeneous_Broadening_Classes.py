@@ -47,8 +47,17 @@ class inhomogeneous_broadening:
 
         return None
 
-    def broadened_susceptibility(self):
+    def broadened_susceptibility(self, half_width, na):
         """
         
         :return: 
         """
+        detunings_local = sp.linspace(-half_width, half_width, na, endpoint=True)
+        dim1, dim2 = sp.shape(self.sing_sim.system.initial_state)
+        fin_state = sp.zeros((na, dim1, dim2), dtype=complex)
+        for index_i, i in enumerate(detunings_local):
+            self.sing_sim.reset_state()
+            fin_state[index_i] = self.sing_sim.final_state(i)
+
+        return fin_state, detunings_local
+
