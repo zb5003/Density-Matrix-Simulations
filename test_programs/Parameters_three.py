@@ -37,8 +37,8 @@ n_refraction = 1.8
 n_states = 3
 initial_state = sp.asarray([[1, 0, 0], [0, 0, 0], [0, 0, 0]], dtype=complex)
 
-gamma = 2 * sp.pi * 1e6
-gamma_slow = 2 * sp.pi * 0.3e6
+gamma = 2 * sp.pi * 4800
+gamma_slow = 2 * sp.pi * 500
 decay_matrix = sp.asarray([[0, 0, 0], [0, gamma_slow, 0], [0, 0, gamma]])
 
 decay_to = sp.asarray([[0, sp.sqrt(gamma_slow), sp.sqrt(gamma / 2)],
@@ -54,18 +54,20 @@ n_total = sum(number_of_atoms)
 ib_linewidth = 2 * sp.pi * n_total * 2500000  # In Hz
 
 # Beam parameters
-power_p = 0.01
-waist_p = 2000e-6
+power_p = 10e-6
+waist_p = 50e-6
 intensity_p = power_p / (2 * sp.pi * waist_p**2)
 field_amplitude_p = sp.sqrt(2 * intensity_p / (n_refraction * epsilon0 * c))
-Rabi_p = a0 * e_charge * field_amplitude_p / hbar
+field_amplitude_p_B = sp.sqrt(4 * mu0 * n_refraction * power_p / (c * sp.pi * waist_p**2))
+Rabi_p = 0.063 * muB * field_amplitude_p_B / hbar
 
-power_c = 0.0005
-waist_c = 2000e-6
+power_c = 0.05
+waist_c = 100e-6
 intensity_c = power_c / (2 * sp.pi * waist_c**2)
 field_amplitude_c = sp.sqrt(2 * intensity_c / (n_refraction * epsilon0 * c))
-Rabi_c = a0 * e_charge * field_amplitude_c / hbar
-
+field_amplitude_c_B = sp.sqrt(4 * mu0 * n_refraction * power_c / (c * sp.pi * waist_c**2))
+Rabi_c = 0.063 * muB * field_amplitude_c_B / hbar
+print(round(Rabi_p / 1e3, 3), round(Rabi_c / 1e3, 3))
 # Interaction parameters
 lower_spacing = [100e6]
 upper_spacing = []
@@ -82,7 +84,7 @@ dipole_operator_c = a0 * e_charge * sp.asarray([[0, 0, 0], [0, 0, 1], [0, 1, 0]]
 print(frequencies_p / 1e6, frequencies_c / 1e6)
 
 # Simulation parameters
-dt = 1 / (80 * max([Rabi_c, Rabi_p, detuning_p, detuning_c]))
-nt = int((10 * (2 * sp.pi) / gamma) / dt)
+dt = 0.1e-9  # 1 / (800 * max([Rabi_c, Rabi_p, detuning_p, detuning_c]))
+nt = 30000  # int((1 * (2 * sp.pi) / gamma) / dt)
 print("Time step =", dt * 1e9, "ns; Number of time steps =", nt)
 the_times = sp.linspace(0, nt * dt, nt, endpoint=False)
