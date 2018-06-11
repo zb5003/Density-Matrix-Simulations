@@ -32,8 +32,8 @@ initial_state = sp.asarray([[1 / 3, 0, 0, 0, 0, 0, 0],
                             [0, 0, 0, 0, 0, 0, 0],
                             [0, 0, 0, 0, 0, 0, 0],
                             [0, 0, 0, 0, 0, 0, 0]], dtype=complex)
-gamma = 2 * sp.pi * 4800
-gamma_slow = 2 * sp.pi * 500
+gamma = 1 / (33e-6)  # 2 * sp.pi * 4800
+gamma_slow = 1 / (1.61e-3)  # 2 * sp.pi * 500
 decay_matrix = sp.asarray([[0, 0, 0, 0, 0, 0, 0],
                            [0, 0, 0, 0, 0, 0, 0],
                            [0, 0, 0, 0, 0, 0, 0],
@@ -50,12 +50,12 @@ decay_to = sp.asarray([[0, 0, 0, sp.sqrt(gamma_slow / 3), 0, 0, 0],
                        [0, 0, 0, 0, 0, 0, 0]])
 
 ionic_density = 9.35e24  # /m^3import
-n_151 = 800
-n_153 = 800
+n_151 = 40000
+n_153 = 40000
 isotope_names = ['151', '153']
 number_of_atoms = [n_151, n_153]
 n_total = sum(number_of_atoms)
-ib_linewidth = 2 * sp.pi * n_total * 2500000  # In Hz
+ib_linewidth = 2 * sp.pi * 40000 * 25000  # In Hz
 
 # Beam parameters
 power = 277e-3
@@ -84,6 +84,6 @@ dipole_operator = 0.063 * muB * sp.asarray([[0, 0, 0, 0, sp.sqrt(0.03), sp.sqrt(
 Rabi_f = a0 * e_charge * field_amplitude / hbar
 
 # Simulation parameters
-dt = 0.5e-9
-nt = 10000
+dt = 0.5e-10
+nt = 42000
 the_times = sp.linspace(0, nt * dt, nt, endpoint=False)

@@ -1,7 +1,7 @@
 """
 All units are in SI.
 """
-import test_programs.Parameters as parameters
+import test_programs.Parameters_seven as parameters
 from density_matrix_classes.Atomic_Simulation_Classes import *
 from density_matrix_classes.Data_Saving_Functions import *
 from density_matrix_classes.physicalconstants import *
