@@ -25,6 +25,7 @@ class inhomogeneous_broadening:
         -Runs in serial using time_evolve_serial() from the single_atom_simulation class.
         -The detuning of each atom is produced by using the detune() function of this class, not the detuning arg in
          time_evolve_serial()
+         
         :return: The state of the system at each timestep averaged over the inhomogeneous line.
         """
         dim1, dim2 = sp.shape(self.sing_sim.system.initial_state)
@@ -40,6 +41,7 @@ class inhomogeneous_broadening:
                detuning):
         """
         Detune the original Hamiltonian by detuning.
+        
         :param detuning: The detuning in Hz.
         :return: None.
         """

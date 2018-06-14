@@ -4,6 +4,7 @@ from density_matrix_classes.physicalconstants import *
 def commutator(M1, M2):
     """
     Calculates the commutator [M1, M2].
+    
     :param M1: Array (possible complex). First matrix.
     :param M2: Array (possible complex). Second matrix.
     :return: Array (possible complex). The commutator between M1 and M2 as a 2-D ndarray.
@@ -13,6 +14,7 @@ def commutator(M1, M2):
 def anticommutator(M1, M2):
     """
     Calculates the anticommutator {M1, M2}.
+    
     :param M1: Array (possible complex). First matrix.
     :param M2: Array (possible complex). Second matrix.
     :return: Array (possible complex). The anticommutator between M1 and M2 as a 2-D ndarray.
@@ -42,6 +44,7 @@ def rho_dot(Hamiltonian, Gamma, rho, closed):
 def RK_rho(Hamiltonian, Gamma, rho, closed, dt):
     """
     Calculates a single time step using the fourth order Runge-Kutta method.
+    
     :param Hamiltonian: Complex array. Hamiltonian.
     :param Gamma: Array. Decay matrix.
     :param rho: Complex array. Density matrx.
@@ -57,6 +60,7 @@ def RK_rho(Hamiltonian, Gamma, rho, closed, dt):
 def time_evolve(Hamiltonian, Gamma, rho, closed, dt, nt):
     """
     Perform multiple time step evolutions starting with the initial density matrix self.Dens_i.
+    
     :param Hamiltonian: Complex array. Hamiltonian.
     :param dt: Float. Time step.
     :param nt: Int. Number of time steps.
