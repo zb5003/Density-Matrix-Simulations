@@ -40,11 +40,13 @@ class atom:
 
     def generate_c(self, dec_to_mat):
         """
-        Splits dec_to_mat into two lists.  One list is a list of lower operators, the other is a list of raising operators.
-        See documentation for more detail.
+        Split dec_to_mat into two lists.
+
+        One list is a list of lower operators, the other is a list of raising operators.
+        These operators are used to simulate the decay of a closed system.
         
-        :param dec_to_mat: Array. Describes the decay from state j to state i.
-        :return: Two lists. The first contains lower operators relevant to the decay, the other contains the relevant raising operators.
+        :param dec_to_mat: Ndarray. Describes the decay from state j to state i.
+        :return: Two lists of ndarrays. The first contains lower operators relevant to the decay, the other contains the relevant raising operators.
         """
         dim1, dim2 = sp.shape(dec_to_mat)
         dim3 = sp.count_nonzero(dec_to_mat)
@@ -64,13 +66,14 @@ class atom:
                     hamiltonian,
                     dt):
         """
-        Preform one step of the time evolution of the atom using the Runge-Kutta
-        fourth order method (found in nlevel.py).
+        Preform one step of the time evolution of the atom.
+
+        Uses the fourth order Runge-Kutta method (found in nlevel.py).
         The instance attribute current_state is updated to the new time-evolved state.
         
-        :param hamiltonian: Array. The Hamiltonian at a particular time.
+        :param hamiltonian: Ndarray. The Hamiltonian at a particular time.
         :param dt: Float. Time step over which to preform the time evolution.
-        :return: Complex array. The time-evolved state.
+        :return: Complex ndarray. The time-evolved state.
         """
         self.current_state = RK_rho(hamiltonian,
                                     self.decay,
@@ -91,9 +94,9 @@ class hamiltonian_construct:
         This class produces a realistic time dependent Hamiltonian (i.e. includes laser turn on) 
         in the interaction picture and dipole approximation. Each instance describes a single beam.
         
-        :param dipoles: Array. Matrix of dipole moments between states (could be electric or magnetic).
+        :param dipoles: Ndarray. Matrix of dipole moments between states (could be electric or magnetic).
         :param field: Float. Amplitude of the (electric or magnetic) field.
-        :param freq: Array. Matrix containing the frequencies at which the Hamiltonian matrix elements
+        :param freq: Ndarray. Matrix containing the frequencies at which the Hamiltonian matrix elements
                      oscillate.
         :param pulse_sequence: Function.  Describes the pulse sequence of the beam.
         :param pulse_params: Tuple.  Contains the parameters, other than time, for pulse_sequence.
@@ -109,19 +112,23 @@ class hamiltonian_construct:
 
     def carrier(self, t):
         """
-        The interaction picture Hamiltonian with instantaneous laser turn on time. 
+        Calculate the interaction picture Hamiltonian with instantaneous laser turn on time.
+
+        The amplitudes of each of the Hamiltonian matrix elements are constant while the phases evolve in time.
         
         :param t: Float. The time.
-        :return: Complex array. The constant amplitude Hamiltonian at time t.
+        :return: Complex ndarray. The constant element amplitude Hamiltonian at time t.
         """
         time_dep = sp.exp(1j * self.freq * t)
         return self.field * sp.multiply(self.dipoles, time_dep)
 
     def envelope(self, t):
         """
-        Caluclates the modulation of the constant amplitude Hamiltonian by the pulse sequence.
-        The output needs to be multiplied by the full filed amplitude before being used in the
-        Hamiltonian.
+        Caluclate the modulation of the interaction picture amplitude of the elements of the Hamiltonian.
+
+
+        The physical interpretation of the modulation is the finite turn on time of any laser.
+        The turn on is modeled by the attribute pulse_sequence.
         
         :param t: Float. The time.
         :return: Float. Relative field amplitude at time t.
@@ -131,11 +138,12 @@ class hamiltonian_construct:
 
     def hamiltonian(self, t):
         """
-        Constructs the physical Hamiltonian (in the interaction picture)
-         at time t by combining the results of envelope() and carrier().
+        Construct the total interaction Hamiltonian at time t.
+
+         The total Hamiltonian is constructed by combining the results of envelope() and carrier().
          
         :param t: Float. The time.
-        :return: Complex array. The full Hamiltonian at time t.
+        :return: Complex ndarray. The full Hamiltonian at time t.
         """
         return - self.envelope(t) * self.carrier(t) / 2
 
@@ -169,9 +177,11 @@ class single_atom_simulation:
 
     def generate_mask(self):
         """
-        Records the nonzero matrix elements of the Hamiltonian.  The mask will mainly be used for detuning the laser beam.
+        Record the nonzero matrix elements of the Hamiltonian.
+
+        The mask will mainly be used for detuning the laser beam from the target transition.
         
-        :return: Array. Elements are one for nonzero Hamiltonian elements and zero otherwise.
+        :return: Ndarray. Elements are one for nonzero Hamiltonian elements and zero otherwise.
         """
         detune_mask = sp.zeros(sp.shape(self.system.initial_state))  # Set / reset mask
         detune_mask[self.ham_obj[0].dipoles != 0] = 1  # Select only nonzero matrix elements of the Hamiltonian
@@ -179,10 +189,10 @@ class single_atom_simulation:
 
     def detune(self, detuning, ham=0):
         """
-        Detunes the frequencies in the Hamiltonian specified by ham.
+        Detune the frequencies in the a specific beam Hamiltonian.
         
         :param detuning: Float.  By how much the beam will be detuned by. Negative for red detuning, positive for blue.
-        :param ham: Specify which beam to detune if there are multiple beams.  The default is the beam that comes first in ham_obj.
+        :param ham: Int. Specify which beam to detune if there are multiple beams.  The default is the beam that comes first in ham_obj.
         :return: None.
         """
         self.ham_obj[ham].freq = self.freq_default + self.mask * detuning
@@ -201,17 +211,19 @@ class single_atom_simulation:
         """
         Extract the envelope of the density matrix amplitudes.
         
-        :param state: Complex array. The density matrix.
+        :param state: Complex ndarray. The density matrix.
         :param t: Float. The time.
-        :return: Complex array. Matrix containing the amplitudes of envelope of the density matrix elements.
+        :return: Complex ndarray. Matrix containing the amplitudes of envelope of the density matrix elements.
         """
         return state * sp.exp(-1j * self.ham_obj[0].freq * t)
 
     def final_state(self):
         """
-        Calculate the state of the system after nt timesteps of size dt.
+        Calculate the state of the system after evolving in time.
+
+        The amount of time that the system is evolved for is determined by the attributes nt and dt, t = nt * dt.
         
-        :return: Complex array. The final density matrix of the system.
+        :return: Complex ndarray. The final density matrix of the system.
         """
         times = sp.linspace(0, self.duration, self.nt, endpoint=False)
         for i in times:
@@ -222,11 +234,12 @@ class single_atom_simulation:
 
     def susceptibility(self, detunings):
         """
-        Calculate the frequency dependent susceptibility for a given system interacting with an arbitrary number of lasers,
-        potentially each with different dipole moments.
+        Calculate the frequency dependent susceptibility for the system.
+
+        The susceptibility is calculated for the first beam in attribute ham_obj.
         
-        :param detunings:  Array. The detunings (in Hz) to sweep through for the susceptibility plot.
-        :return: Complex array. The value of the susceptibility at each detuning.
+        :param detunings:  Ndarray. The detunings (in Hz) to sweep through for the susceptibility plot.
+        :return: Complex ndarray. The value of the susceptibility at each detuning.
         """
         dim1, dim2 = sp.shape(self.system.initial_state)
         chi = sp.zeros((len(detunings), dim1, dim2), dtype=complex)
@@ -242,7 +255,7 @@ class single_atom_simulation:
         """
         Calculate the state of the system at each of the nt time steps of size dt.
         
-        :return: Complex arrat. The density matrix at ever timestep of the simulation.
+        :return: Complex ndarray. The density matrix at ever timestep of the simulation.
         """
         t1 = time.time()
         self.detune(detuning)

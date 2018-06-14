@@ -6,9 +6,9 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>density_matrix_classes.nlevel &#8212; Density_Matrix_Simulation 0.0.1 documentation</title>
+    <title>density_matrix_classes.nlevel &mdash; Density_Matrix_Simulation 0.0.1 documentation</title>
     
-    <link rel="stylesheet" href="../../_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/classic.css" type="text/css" />
     <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
     
     <script type="text/javascript">
@@ -17,24 +17,31 @@
         VERSION:     '0.0.1',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
-        HAS_SOURCE:  true,
-        SOURCELINK_SUFFIX: '.txt'
+        HAS_SOURCE:  true
       };
     </script>
     <script type="text/javascript" src="../../_static/jquery.js"></script>
     <script type="text/javascript" src="../../_static/underscore.js"></script>
     <script type="text/javascript" src="../../_static/doctools.js"></script>
-    <link rel="index" title="Index" href="../../genindex.html" />
-    <link rel="search" title="Search" href="../../search.html" />
-   
-  <link rel="stylesheet" href="../../_static/custom.css" type="text/css" />
-  
-  
-  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
-
+    <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="top" title="Density_Matrix_Simulation 0.0.1 documentation" href="../../index.html" />
+    <link rel="up" title="density_matrix_classes" href="../density_matrix_classes.html" /> 
   </head>
   <body role="document">
-  
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../index.html">Density_Matrix_Simulation 0.0.1 documentation</a> &raquo;</li>
+          <li class="nav-item nav-item-1"><a href="../index.html" >Module code</a> &raquo;</li>
+          <li class="nav-item nav-item-2"><a href="../density_matrix_classes.html" accesskey="U">density_matrix_classes</a> &raquo;</li> 
+      </ul>
+    </div>  
 
     <div class="document">
       <div class="documentwrapper">
@@ -42,46 +49,54 @@
           <div class="body" role="main">
             
   <h1>Source code for density_matrix_classes.nlevel</h1><div class="highlight"><pre>
-<span></span><span class="kn">import</span> <span class="nn">scipy</span> <span class="k">as</span> <span class="nn">sp</span>
-<span class="kn">from</span> <span class="nn">density_matrix_classes.physicalconstants</span> <span class="k">import</span> <span class="o">*</span>
+<span class="kn">import</span> <span class="nn">scipy</span> <span class="kn">as</span> <span class="nn">sp</span>
+<span class="kn">from</span> <span class="nn">density_matrix_classes.physicalconstants</span> <span class="kn">import</span> <span class="o">*</span>
 
 <div class="viewcode-block" id="commutator"><a class="viewcode-back" href="../../density_matrix_classes.html#density_matrix_classes.nlevel.commutator">[docs]</a><span class="k">def</span> <span class="nf">commutator</span><span class="p">(</span><span class="n">M1</span><span class="p">,</span> <span class="n">M2</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Calculates the commutator [M1, M2].</span>
+<span class="sd">    Calculate the commutator [M1, M2].</span>
 <span class="sd">    </span>
-<span class="sd">    :param M1: Array (possible complex). First matrix.</span>
-<span class="sd">    :param M2: Array (possible complex). Second matrix.</span>
-<span class="sd">    :return: Array (possible complex). The commutator between M1 and M2 as a 2-D ndarray.</span>
+<span class="sd">    :param M1: Ndarray (possible complex). First matrix.</span>
+<span class="sd">    :param M2: Ndarray (possible complex). Second matrix.</span>
+<span class="sd">    :return: Ndarray (possible complex). The commutator between M1 and M2 as a 2-D ndarray.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">return</span> <span class="n">sp</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">M1</span><span class="p">,</span> <span class="n">M2</span><span class="p">)</span> <span class="o">-</span> <span class="n">sp</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">M2</span><span class="p">,</span> <span class="n">M1</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="anticommutator"><a class="viewcode-back" href="../../density_matrix_classes.html#density_matrix_classes.nlevel.anticommutator">[docs]</a><span class="k">def</span> <span class="nf">anticommutator</span><span class="p">(</span><span class="n">M1</span><span class="p">,</span> <span class="n">M2</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Calculates the anticommutator {M1, M2}.</span>
+<span class="sd">    Calculate the anticommutator {M1, M2}.</span>
 <span class="sd">    </span>
-<span class="sd">    :param M1: Array (possible complex). First matrix.</span>
-<span class="sd">    :param M2: Array (possible complex). Second matrix.</span>
-<span class="sd">    :return: Array (possible complex). The anticommutator between M1 and M2 as a 2-D ndarray.</span>
+<span class="sd">    :param M1: Ndarray (possible complex). First matrix.</span>
+<span class="sd">    :param M2: Ndarray (possible complex). Second matrix.</span>
+<span class="sd">    :return: Ndarray (possible complex). The anticommutator between M1 and M2 as a 2-D ndarray.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">return</span> <span class="n">sp</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">M1</span><span class="p">,</span> <span class="n">M2</span><span class="p">)</span> <span class="o">+</span> <span class="n">sp</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">M2</span><span class="p">,</span> <span class="n">M1</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="rho_dot"><a class="viewcode-back" href="../../density_matrix_classes.html#density_matrix_classes.nlevel.rho_dot">[docs]</a><span class="k">def</span> <span class="nf">rho_dot</span><span class="p">(</span><span class="n">Hamiltonian</span><span class="p">,</span> <span class="n">Gamma</span><span class="p">,</span> <span class="n">rho</span><span class="p">,</span> <span class="n">closed</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Calculate the time derivative of the density matrix using the quantum master equation (Steck eq. 5.177 &amp; 5.178 pg 181)</span>
-<span class="sd">        rho_dot = -i / hbar * [H, rho] + Gamma * D[c] * rho</span>
+<span class="sd">    Calculate the time derivative of the density matrix</span>
+
+<span class="sd">    This function uses the Lindblad form of the quantum master equation (Steck eq. 5.177 &amp; 5.178 pg 181)</span>
+
+<span class="sd">    .. math::</span>
+<span class="sd">        \\dot{\\rho} = -\\frac{i}{\\hbar} [H, \\rho] + \\Gamma D[c] \\rho</span>
+
 <span class="sd">    where</span>
-<span class="sd">        D[c] * rho = 1 / 2 * {c_dagger * c, rho}.</span>
-<span class="sd">    Gamma is the decay rate and c are the transition matrices of the n level system. In practice c will be a sum of </span>
-<span class="sd">    multiple transition matrices.</span>
+
+<span class="sd">    .. math::</span>
+<span class="sd">        D[c] \\rho = c\\rho c^{\\dagger} - \\frac{1}{2} \\{c^{\\dagger} c, \\rho\\}.</span>
+
+<span class="sd">    :math:`\Gamma` is the decay rate and :math:`c` along with its Hermitian conjugate :math:`c^{\dagger}` are the transition matrices</span>
+<span class="sd">    of the n level system.</span>
 <span class="sd">    The documentation also has some extra information.</span>
 <span class="sd">    For now only radiative decay is considered (no dephasing).</span>
 <span class="sd">    </span>
-<span class="sd">    :param Hamiltonian: Complex array. Hamiltonian.</span>
-<span class="sd">    :param Gamma: Array. Decay matrix.</span>
-<span class="sd">    :param rho: Complex array. density matrix.</span>
-<span class="sd">    :return: Complex array. Time derivative of the density matrix.</span>
+<span class="sd">    :param Hamiltonian: Complex ndarray. Hamiltonian.</span>
+<span class="sd">    :param Gamma: Ndarray. Decay matrix.</span>
+<span class="sd">    :param rho: Complex ndarray. density matrix.</span>
+<span class="sd">    :return: Complex ndarray. Time derivative of the density matrix.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">return</span> <span class="o">-</span><span class="mi">1</span><span class="n">j</span> <span class="o">/</span> <span class="n">hbar</span> <span class="o">*</span> <span class="n">commutator</span><span class="p">(</span><span class="n">Hamiltonian</span><span class="p">,</span> <span class="n">rho</span><span class="p">)</span> \
+    <span class="k">return</span> <span class="o">-</span><span class="mi">1j</span> <span class="o">/</span> <span class="n">hbar</span> <span class="o">*</span> <span class="n">commutator</span><span class="p">(</span><span class="n">Hamiltonian</span><span class="p">,</span> <span class="n">rho</span><span class="p">)</span> \
            <span class="o">-</span> <span class="mi">1</span> <span class="o">/</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">anticommutator</span><span class="p">(</span><span class="n">Gamma</span><span class="p">,</span> <span class="n">rho</span><span class="p">)</span> \
            <span class="o">+</span> <span class="nb">sum</span><span class="p">(</span><span class="n">sp</span><span class="o">.</span><span class="n">matmul</span><span class="p">(</span><span class="n">closed</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">sp</span><span class="o">.</span><span class="n">matmul</span><span class="p">(</span><span class="n">rho</span><span class="p">,</span> <span class="n">closed</span><span class="p">[</span><span class="mi">1</span><span class="p">])))</span></div>
 
@@ -120,42 +135,41 @@
         </div>
       </div>
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
-        <div class="sphinxsidebarwrapper"><div class="relations">
-<h3>Related Topics</h3>
-<ul>
-  <li><a href="../../index.html">Documentation overview</a><ul>
-  <li><a href="../index.html">Module code</a><ul>
-  <li><a href="../density_matrix_classes.html">density_matrix_classes</a><ul>
-  </ul></li>
-  </ul></li>
-  </ul></li>
-</ul>
-</div>
+        <div class="sphinxsidebarwrapper">
 <div id="searchbox" style="display: none" role="search">
   <h3>Quick search</h3>
     <form class="search" action="../../search.html" method="get">
-      <div><input type="text" name="q" /></div>
-      <div><input type="submit" value="Go" /></div>
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
       <input type="hidden" name="check_keywords" value="yes" />
       <input type="hidden" name="area" value="default" />
     </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
 </div>
 <script type="text/javascript">$('#searchbox').show(0);</script>
         </div>
       </div>
       <div class="clearer"></div>
     </div>
-    <div class="footer">
-      &copy;2018, Zachary Buckholtz.
-      
-      |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.5.1</a>
-      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.9</a>
-      
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../index.html">Density_Matrix_Simulation 0.0.1 documentation</a> &raquo;</li>
+          <li class="nav-item nav-item-1"><a href="../index.html" >Module code</a> &raquo;</li>
+          <li class="nav-item nav-item-2"><a href="../density_matrix_classes.html" >density_matrix_classes</a> &raquo;</li> 
+      </ul>
     </div>
-
-    
-
-    
+    <div class="footer" role="contentinfo">
+        &copy; Copyright 2018, Zachary Buckholtz.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.3.5.
+    </div>
   </body>
 </html>

@@ -1,10 +1,9 @@
-density_matrix_classes package
+1 density_matrix_classes package
 ==============================
+This package Simulates the time evolution of an N level atom interacting with M fields.  
+The time evolution is calculated using the Lindblad form of the master equation.
 
-Submodules
-----------
-
-density_matrix_classes.Atomic_Simulation_Classes module
+1.1 Atomic_Simulation_Classes module
 -------------------------------------------------------
 
 .. automodule:: density_matrix_classes.Atomic_Simulation_Classes
@@ -12,7 +11,7 @@ density_matrix_classes.Atomic_Simulation_Classes module
     :undoc-members:
     :show-inheritance:
 
-density_matrix_classes.Data_Saving_Functions module
+1.2 Data_Saving_Functions module
 ---------------------------------------------------
 
 .. automodule:: density_matrix_classes.Data_Saving_Functions
@@ -20,7 +19,7 @@ density_matrix_classes.Data_Saving_Functions module
     :undoc-members:
     :show-inheritance:
 
-density_matrix_classes.Inhomogeneous_Broadening_Classes module
+1.3 Inhomogeneous_Broadening_Classes module
 --------------------------------------------------------------
 
 .. automodule:: density_matrix_classes.Inhomogeneous_Broadening_Classes
@@ -28,7 +27,7 @@ density_matrix_classes.Inhomogeneous_Broadening_Classes module
     :undoc-members:
     :show-inheritance:
 
-density_matrix_classes.nlevel module
+1.4 nlevel module
 ------------------------------------
 
 .. automodule:: density_matrix_classes.nlevel
@@ -36,7 +35,7 @@ density_matrix_classes.nlevel module
     :undoc-members:
     :show-inheritance:
 
-density_matrix_classes.physicalconstants module
+1.5 physicalconstants module
 -----------------------------------------------
 
 .. automodule:: density_matrix_classes.physicalconstants
