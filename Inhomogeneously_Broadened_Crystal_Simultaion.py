@@ -42,8 +42,8 @@ decay_to = sp.asarray([[0, 0, 0, sp.sqrt(gamma_slow / 3), 0, 0, 0],
                        [0, 0, 0, 0, 0, 0, 0],
                        [0, 0, 0, 0, 0, 0, 0]])
 
-number_of_atoms = 10 #40000
-ib_linewidth = 2 * sp.pi * 1e9 * 0 #number_of_atoms * 25000
+number_of_atoms = 40000 #40000
+ib_linewidth = 2 * sp.pi * 1e9 #number_of_atoms * 25000
 
 # Beam parameters _______________________________
 power_p = 277e-3
@@ -78,8 +78,8 @@ dipole_operator_p = 0.063 * muB * sp.asarray([[0, 0, 0, 0, sp.sqrt(0.85), sp.sqr
                                               [sp.sqrt(0.05), sp.sqrt(0.2), sp.sqrt(0.75), 0, 0, 0, 0]])
 
 # Simulation parameters _________________________
-dt = 1e-10
-nt = 21000
+dt = 0.5e-10
+nt = 42000
 the_times = sp.linspace(0, nt * dt, nt, endpoint=False)
 
 # Objects _____________________________________________________________________
