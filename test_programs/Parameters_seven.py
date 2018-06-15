@@ -41,13 +41,14 @@ decay_matrix = sp.asarray([[0, 0, 0, 0, 0, 0, 0],
                            [0, 0, 0, 0, gamma, 0, 0],
                            [0, 0, 0, 0, 0, gamma, 0],
                            [0, 0, 0, 0, 0, 0, gamma]])
-decay_to = sp.asarray([[0, 0, 0, sp.sqrt(gamma_slow / 3), 0, 0, 0],
-                       [0, 0, 0, sp.sqrt(gamma_slow / 3), 0, 0, 0],
-                       [0, 0, 0, sp.sqrt(gamma_slow / 3), 0, 0, 0],
-                       [0, 0, 0, 0, sp.sqrt(gamma), sp.sqrt(gamma), sp.sqrt(gamma)],
-                       [0, 0, 0, 0, 0, 0, 0],
-                       [0, 0, 0, 0, 0, 0, 0],
-                       [0, 0, 0, 0, 0, 0, 0]])
+# decay_to = sp.asarray([[0, 0, 0, sp.sqrt(gamma_slow / 3), 0, 0, 0],
+#                        [0, 0, 0, sp.sqrt(gamma_slow / 3), 0, 0, 0],
+#                        [0, 0, 0, sp.sqrt(gamma_slow / 3), 0, 0, 0],
+#                        [0, 0, 0, 0, sp.sqrt(gamma), sp.sqrt(gamma), sp.sqrt(gamma)],
+#                        [0, 0, 0, 0, 0, 0, 0],
+#                        [0, 0, 0, 0, 0, 0, 0],
+#                        [0, 0, 0, 0, 0, 0, 0]])
+decay_to = sp.zeros((7, 7))
 
 ionic_density = 9.35e24  # /m^3import
 n_151 = 40000
