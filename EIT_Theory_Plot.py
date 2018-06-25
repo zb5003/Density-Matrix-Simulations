@@ -14,7 +14,7 @@ def Rabi_freq(dip, field):
 
 def rho_13(del_om, del_om_p, dip_p, dip_c, field_p, field_c, gamma):
     """
-    
+    No Dephasing
     :param del_om: 
     :param del_om_p: 
     :param dip_p: 
