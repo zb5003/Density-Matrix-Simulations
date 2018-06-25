@@ -50,7 +50,7 @@ def rho_13_full(del_om, del_om_p, dip_p, dip_c, field_p, field_c, gamma21, gamma
     return numerator / denominator
 
 gamma = 1 / 33e-6
-gamma21 = 5e5
+gamma21 = 5e6
 gamma31 = 2e6
 
 n = 1.8
