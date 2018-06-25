@@ -2,7 +2,7 @@ import scipy as sp
 import matplotlib.pyplot as plt
 import matplotlib.ticker as ticker
 import density_matrix_classes.physicalconstants as pc
-import test_programs.Parameters as param
+import test_programs.Parameters_three as param
 
 def burned_back(freq):
     sigma = 500e3
@@ -33,22 +33,24 @@ def rho_13(del_om, del_om_p, rabi_c):
     return coef * del_om / (4 * del_om * del_om_p - rabi_c**2 + 2 * 1j * del_om * param.gamma)
 
 n = 1.8
-power_c = 800e-3
-waist_c = 101e-6 / 2
+power_c = 65e-3
+waist_c = 45e-6
 intensity_c = power_c / (2 * sp.pi * waist_c**2)
 field_amplitude_c = sp.sqrt(4 * pc.mu0 * n * power_c / (pc.c * sp.pi * waist_c**2))
-dip_c = 0.063 * sp.sqrt(0.05) * pc.muB
+dip_c = 0.063 * sp.sqrt(0.75) * pc.muB
 offset_c = 0e6
 rabi_c = Rabi_freq(dip_c, field_amplitude_c)
+print(sp.sqrt(4 * pc.mu0 * n / (pc.c * sp.pi * waist_c**2)) * dip_c / pc.hbar / 1e6)
 print("Coupling intensity =", intensity_c / (100)**2, "W/cm^2")
 print("Coupling Rabi frequency =", rabi_c / 1e6, "MHz")
 
-power_p = 7.5e-6
-waist_p = 50e-6 / 2
+power_p = 250e-6
+waist_p = 35e-6
 intensity_p = power_p / (2 * sp.pi * waist_p**2)
 field_amplitude_p = sp.sqrt(4 * pc.mu0 * n * power_p / (pc.c * sp.pi * waist_p**2))
-dip_p = 0.063 * sp.sqrt(0.2) * pc.muB
+dip_p = 0.063 * sp.sqrt(0.18) * pc.muB
 rabi_p = Rabi_freq(dip_p, field_amplitude_p)
+print(sp.sqrt(4 * pc.mu0 * n / (pc.c * sp.pi * waist_p**2)) * dip_c / pc.hbar / 1e6)
 print("Probe intensity =", intensity_p / (100)**2, "W/cm^2")
 print("Probe Rabi frequency =", rabi_p / 1e6, "MHz")
 print("Ratio of coupling Rabi frequency to probe Rabi frequency =", rabi_c / rabi_p)

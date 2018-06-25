@@ -99,7 +99,7 @@ These operators are used to simulate the decay of a closed system.</p>
 
 <dl class="class">
 <dt id="density_matrix_classes.Atomic_Simulation_Classes.hamiltonian_construct">
-<em class="property">class </em><code class="descclassname">density_matrix_classes.Atomic_Simulation_Classes.</code><code class="descname">hamiltonian_construct</code><span class="sig-paren">(</span><em>dipoles</em>, <em>field</em>, <em>freq</em>, <em>pulse_sequence=&lt;function sigmoid at 0x00000000050D0358&gt;</em>, <em>pulse_params=(9e-09</em>, <em>9e-08)</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/density_matrix_classes/Atomic_Simulation_Classes.html#hamiltonian_construct"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#density_matrix_classes.Atomic_Simulation_Classes.hamiltonian_construct" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">density_matrix_classes.Atomic_Simulation_Classes.</code><code class="descname">hamiltonian_construct</code><span class="sig-paren">(</span><em>dipoles</em>, <em>field</em>, <em>freq</em>, <em>pulse_sequence=&lt;function sigmoid at 0x00000000050EE358&gt;</em>, <em>pulse_params=(9e-09</em>, <em>9e-08)</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/density_matrix_classes/Atomic_Simulation_Classes.html#hamiltonian_construct"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#density_matrix_classes.Atomic_Simulation_Classes.hamiltonian_construct" title="Permalink to this definition">¶</a></dt>
 <dd><dl class="method">
 <dt id="density_matrix_classes.Atomic_Simulation_Classes.hamiltonian_construct.carrier">
 <code class="descname">carrier</code><span class="sig-paren">(</span><em>t</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/density_matrix_classes/Atomic_Simulation_Classes.html#hamiltonian_construct.carrier"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#density_matrix_classes.Atomic_Simulation_Classes.hamiltonian_construct.carrier" title="Permalink to this definition">¶</a></dt>
@@ -300,8 +300,188 @@ The turn on is modeled by the attribute pulse_sequence.</p>
 </dd></dl>
 
 </div>
+<div class="section" id="module-density_matrix_classes.nlevel">
+<span id="nlevel-module"></span><h2>1.2 nlevel module<a class="headerlink" href="#module-density_matrix_classes.nlevel" title="Permalink to this headline">¶</a></h2>
+<dl class="function">
+<dt id="density_matrix_classes.nlevel.RK_rho">
+<code class="descclassname">density_matrix_classes.nlevel.</code><code class="descname">RK_rho</code><span class="sig-paren">(</span><em>Hamiltonian</em>, <em>Gamma</em>, <em>rho</em>, <em>closed</em>, <em>dt</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/density_matrix_classes/nlevel.html#RK_rho"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#density_matrix_classes.nlevel.RK_rho" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculates a single time step using the fourth order Runge-Kutta method.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>Hamiltonian</strong> &#8211; Complex array. Hamiltonian.</li>
+<li><strong>Gamma</strong> &#8211; Array. Decay matrix.</li>
+<li><strong>rho</strong> &#8211; Complex array. Density matrx.</li>
+<li><strong>dt</strong> &#8211; Float. Time step.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">Complex array. Density matrix after evolving for time dt.</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="density_matrix_classes.nlevel.anticommutator">
+<code class="descclassname">density_matrix_classes.nlevel.</code><code class="descname">anticommutator</code><span class="sig-paren">(</span><em>M1</em>, <em>M2</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/density_matrix_classes/nlevel.html#anticommutator"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#density_matrix_classes.nlevel.anticommutator" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculate the anticommutator {M1, M2}.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>M1</strong> &#8211; Ndarray (possible complex). First matrix.</li>
+<li><strong>M2</strong> &#8211; Ndarray (possible complex). Second matrix.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">Ndarray (possible complex). The anticommutator between M1 and M2 as a 2-D ndarray.</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="density_matrix_classes.nlevel.commutator">
+<code class="descclassname">density_matrix_classes.nlevel.</code><code class="descname">commutator</code><span class="sig-paren">(</span><em>M1</em>, <em>M2</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/density_matrix_classes/nlevel.html#commutator"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#density_matrix_classes.nlevel.commutator" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculate the commutator [M1, M2].</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>M1</strong> &#8211; Ndarray (possible complex). First matrix.</li>
+<li><strong>M2</strong> &#8211; Ndarray (possible complex). Second matrix.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">Ndarray (possible complex). The commutator between M1 and M2 as a 2-D ndarray.</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="density_matrix_classes.nlevel.rho_dot">
+<code class="descclassname">density_matrix_classes.nlevel.</code><code class="descname">rho_dot</code><span class="sig-paren">(</span><em>Hamiltonian</em>, <em>Gamma</em>, <em>rho</em>, <em>closed</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/density_matrix_classes/nlevel.html#rho_dot"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#density_matrix_classes.nlevel.rho_dot" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculate the time derivative of the density matrix</p>
+<p>This function uses the Lindblad form of the quantum master equation (Steck eq. 5.177 &amp; 5.178 pg 181)</p>
+<div class="math">
+\[\dot{\rho} = -\frac{i}{\hbar} [H, \rho] + \Gamma D[c] \rho\]</div>
+<p>where</p>
+<div class="math">
+\[D[c] \rho = c\rho c^{\dagger} - \frac{1}{2} \{c^{\dagger} c, \rho\}.\]</div>
+<p><span class="math">\(\Gamma\)</span> is the decay rate and <span class="math">\(c\)</span> along with its Hermitian conjugate <span class="math">\(c^{\dagger}\)</span> are the transition matrices
+of the n level system.
+The documentation also has some extra information.
+For now only radiative decay is considered (no dephasing).</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>Hamiltonian</strong> &#8211; Complex ndarray. Hamiltonian.</li>
+<li><strong>Gamma</strong> &#8211; Ndarray. Decay matrix.</li>
+<li><strong>rho</strong> &#8211; Complex ndarray. density matrix.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">Complex ndarray. Time derivative of the density matrix.</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="density_matrix_classes.nlevel.time_evolve">
+<code class="descclassname">density_matrix_classes.nlevel.</code><code class="descname">time_evolve</code><span class="sig-paren">(</span><em>Hamiltonian</em>, <em>Gamma</em>, <em>rho</em>, <em>closed</em>, <em>dt</em>, <em>nt</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/density_matrix_classes/nlevel.html#time_evolve"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#density_matrix_classes.nlevel.time_evolve" title="Permalink to this definition">¶</a></dt>
+<dd><p>Perform multiple time step evolutions starting with the initial density matrix self.Dens_i.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>Hamiltonian</strong> &#8211; Complex array. Hamiltonian.</li>
+<li><strong>dt</strong> &#8211; Float. Time step.</li>
+<li><strong>nt</strong> &#8211; Int. Number of time steps.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">Complex array. Density matrix after evolving for many time steps.</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</div>
+<div class="section" id="module-density_matrix_classes.Inhomogeneous_Broadening_Classes">
+<span id="inhomogeneous-broadening-classes-module"></span><h2>1.3 Inhomogeneous_Broadening_Classes module<a class="headerlink" href="#module-density_matrix_classes.Inhomogeneous_Broadening_Classes" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="density_matrix_classes.Inhomogeneous_Broadening_Classes.inhomogeneous_broadening">
+<em class="property">class </em><code class="descclassname">density_matrix_classes.Inhomogeneous_Broadening_Classes.</code><code class="descname">inhomogeneous_broadening</code><span class="sig-paren">(</span><em>sing_sim</em>, <em>linewidth</em>, <em>n_atoms</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/density_matrix_classes/Inhomogeneous_Broadening_Classes.html#inhomogeneous_broadening"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#density_matrix_classes.Inhomogeneous_Broadening_Classes.inhomogeneous_broadening" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="method">
+<dt id="density_matrix_classes.Inhomogeneous_Broadening_Classes.inhomogeneous_broadening.broadened_susceptibility">
+<code class="descname">broadened_susceptibility</code><span class="sig-paren">(</span><em>half_width</em>, <em>na</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/density_matrix_classes/Inhomogeneous_Broadening_Classes.html#inhomogeneous_broadening.broadened_susceptibility"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#density_matrix_classes.Inhomogeneous_Broadening_Classes.inhomogeneous_broadening.broadened_susceptibility" title="Permalink to this definition">¶</a></dt>
+<dd><p>In the works.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="density_matrix_classes.Inhomogeneous_Broadening_Classes.inhomogeneous_broadening.broadened_time_evolution">
+<code class="descname">broadened_time_evolution</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/density_matrix_classes/Inhomogeneous_Broadening_Classes.html#inhomogeneous_broadening.broadened_time_evolution"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#density_matrix_classes.Inhomogeneous_Broadening_Classes.inhomogeneous_broadening.broadened_time_evolution" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculate the state of all the atoms in the inhomogeneous line at each of nt time steps of size dt.</p>
+<p>Runs in serial using time_evolve_serial() from the single_atom_simulation class.
+The detuning of each atom is produced by using the detune() method of this class, not the detuning arg in
+time_evolve_serial()</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">Complex ndarray. The state of the system at each timestep averaged over the inhomogeneous line.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="density_matrix_classes.Inhomogeneous_Broadening_Classes.inhomogeneous_broadening.detune">
+<code class="descname">detune</code><span class="sig-paren">(</span><em>detuning</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/density_matrix_classes/Inhomogeneous_Broadening_Classes.html#inhomogeneous_broadening.detune"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#density_matrix_classes.Inhomogeneous_Broadening_Classes.inhomogeneous_broadening.detune" title="Permalink to this definition">¶</a></dt>
+<dd><p>Detune the original Hamiltonian.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>detuning</strong> &#8211; Float. The detuning in Hz.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">None.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-density_matrix_classes.physicalconstants">
+<span id="physicalconstants-module"></span><h2>1.4 physicalconstants module<a class="headerlink" href="#module-density_matrix_classes.physicalconstants" title="Permalink to this headline">¶</a></h2>
+</div>
 <div class="section" id="module-density_matrix_classes.Data_Saving_Functions">
-<span id="data-saving-functions-module"></span><h2>1.2 Data_Saving_Functions module<a class="headerlink" href="#module-density_matrix_classes.Data_Saving_Functions" title="Permalink to this headline">¶</a></h2>
+<span id="data-saving-functions-module"></span><h2>1.5 Data_Saving_Functions module<a class="headerlink" href="#module-density_matrix_classes.Data_Saving_Functions" title="Permalink to this headline">¶</a></h2>
 <dl class="function">
 <dt id="density_matrix_classes.Data_Saving_Functions.coherence_plot">
 <code class="descclassname">density_matrix_classes.Data_Saving_Functions.</code><code class="descname">coherence_plot</code><span class="sig-paren">(</span><em>times</em>, <em>density_m</em>, <em>location</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/density_matrix_classes/Data_Saving_Functions.html#coherence_plot"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#density_matrix_classes.Data_Saving_Functions.coherence_plot" title="Permalink to this definition">¶</a></dt>
@@ -476,186 +656,6 @@ populations.</p>
 </dd></dl>
 
 </div>
-<div class="section" id="module-density_matrix_classes.Inhomogeneous_Broadening_Classes">
-<span id="inhomogeneous-broadening-classes-module"></span><h2>1.3 Inhomogeneous_Broadening_Classes module<a class="headerlink" href="#module-density_matrix_classes.Inhomogeneous_Broadening_Classes" title="Permalink to this headline">¶</a></h2>
-<dl class="class">
-<dt id="density_matrix_classes.Inhomogeneous_Broadening_Classes.inhomogeneous_broadening">
-<em class="property">class </em><code class="descclassname">density_matrix_classes.Inhomogeneous_Broadening_Classes.</code><code class="descname">inhomogeneous_broadening</code><span class="sig-paren">(</span><em>sing_sim</em>, <em>linewidth</em>, <em>n_atoms</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/density_matrix_classes/Inhomogeneous_Broadening_Classes.html#inhomogeneous_broadening"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#density_matrix_classes.Inhomogeneous_Broadening_Classes.inhomogeneous_broadening" title="Permalink to this definition">¶</a></dt>
-<dd><dl class="method">
-<dt id="density_matrix_classes.Inhomogeneous_Broadening_Classes.inhomogeneous_broadening.broadened_susceptibility">
-<code class="descname">broadened_susceptibility</code><span class="sig-paren">(</span><em>half_width</em>, <em>na</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/density_matrix_classes/Inhomogeneous_Broadening_Classes.html#inhomogeneous_broadening.broadened_susceptibility"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#density_matrix_classes.Inhomogeneous_Broadening_Classes.inhomogeneous_broadening.broadened_susceptibility" title="Permalink to this definition">¶</a></dt>
-<dd><p>In the works.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"></td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-<dl class="method">
-<dt id="density_matrix_classes.Inhomogeneous_Broadening_Classes.inhomogeneous_broadening.broadened_time_evolution">
-<code class="descname">broadened_time_evolution</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/density_matrix_classes/Inhomogeneous_Broadening_Classes.html#inhomogeneous_broadening.broadened_time_evolution"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#density_matrix_classes.Inhomogeneous_Broadening_Classes.inhomogeneous_broadening.broadened_time_evolution" title="Permalink to this definition">¶</a></dt>
-<dd><p>Calculate the state of all the atoms in the inhomogeneous line at each of nt time steps of size dt.</p>
-<p>Runs in serial using time_evolve_serial() from the single_atom_simulation class.
-The detuning of each atom is produced by using the detune() method of this class, not the detuning arg in
-time_evolve_serial()</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">Complex ndarray. The state of the system at each timestep averaged over the inhomogeneous line.</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-<dl class="method">
-<dt id="density_matrix_classes.Inhomogeneous_Broadening_Classes.inhomogeneous_broadening.detune">
-<code class="descname">detune</code><span class="sig-paren">(</span><em>detuning</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/density_matrix_classes/Inhomogeneous_Broadening_Classes.html#inhomogeneous_broadening.detune"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#density_matrix_classes.Inhomogeneous_Broadening_Classes.inhomogeneous_broadening.detune" title="Permalink to this definition">¶</a></dt>
-<dd><p>Detune the original Hamiltonian.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>detuning</strong> &#8211; Float. The detuning in Hz.</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">None.</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-</dd></dl>
-
-</div>
-<div class="section" id="module-density_matrix_classes.nlevel">
-<span id="nlevel-module"></span><h2>1.4 nlevel module<a class="headerlink" href="#module-density_matrix_classes.nlevel" title="Permalink to this headline">¶</a></h2>
-<dl class="function">
-<dt id="density_matrix_classes.nlevel.RK_rho">
-<code class="descclassname">density_matrix_classes.nlevel.</code><code class="descname">RK_rho</code><span class="sig-paren">(</span><em>Hamiltonian</em>, <em>Gamma</em>, <em>rho</em>, <em>closed</em>, <em>dt</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/density_matrix_classes/nlevel.html#RK_rho"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#density_matrix_classes.nlevel.RK_rho" title="Permalink to this definition">¶</a></dt>
-<dd><p>Calculates a single time step using the fourth order Runge-Kutta method.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>Hamiltonian</strong> &#8211; Complex array. Hamiltonian.</li>
-<li><strong>Gamma</strong> &#8211; Array. Decay matrix.</li>
-<li><strong>rho</strong> &#8211; Complex array. Density matrx.</li>
-<li><strong>dt</strong> &#8211; Float. Time step.</li>
-</ul>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">Complex array. Density matrix after evolving for time dt.</p>
-</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-<dl class="function">
-<dt id="density_matrix_classes.nlevel.anticommutator">
-<code class="descclassname">density_matrix_classes.nlevel.</code><code class="descname">anticommutator</code><span class="sig-paren">(</span><em>M1</em>, <em>M2</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/density_matrix_classes/nlevel.html#anticommutator"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#density_matrix_classes.nlevel.anticommutator" title="Permalink to this definition">¶</a></dt>
-<dd><p>Calculate the anticommutator {M1, M2}.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>M1</strong> &#8211; Ndarray (possible complex). First matrix.</li>
-<li><strong>M2</strong> &#8211; Ndarray (possible complex). Second matrix.</li>
-</ul>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">Ndarray (possible complex). The anticommutator between M1 and M2 as a 2-D ndarray.</p>
-</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-<dl class="function">
-<dt id="density_matrix_classes.nlevel.commutator">
-<code class="descclassname">density_matrix_classes.nlevel.</code><code class="descname">commutator</code><span class="sig-paren">(</span><em>M1</em>, <em>M2</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/density_matrix_classes/nlevel.html#commutator"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#density_matrix_classes.nlevel.commutator" title="Permalink to this definition">¶</a></dt>
-<dd><p>Calculate the commutator [M1, M2].</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>M1</strong> &#8211; Ndarray (possible complex). First matrix.</li>
-<li><strong>M2</strong> &#8211; Ndarray (possible complex). Second matrix.</li>
-</ul>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">Ndarray (possible complex). The commutator between M1 and M2 as a 2-D ndarray.</p>
-</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-<dl class="function">
-<dt id="density_matrix_classes.nlevel.rho_dot">
-<code class="descclassname">density_matrix_classes.nlevel.</code><code class="descname">rho_dot</code><span class="sig-paren">(</span><em>Hamiltonian</em>, <em>Gamma</em>, <em>rho</em>, <em>closed</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/density_matrix_classes/nlevel.html#rho_dot"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#density_matrix_classes.nlevel.rho_dot" title="Permalink to this definition">¶</a></dt>
-<dd><p>Calculate the time derivative of the density matrix</p>
-<p>This function uses the Lindblad form of the quantum master equation (Steck eq. 5.177 &amp; 5.178 pg 181)</p>
-<div class="math">
-\[\dot{\rho} = -\frac{i}{\hbar} [H, \rho] + \Gamma D[c] \rho\]</div>
-<p>where</p>
-<div class="math">
-\[D[c] \rho = c\rho c^{\dagger} - \frac{1}{2} \{c^{\dagger} c, \rho\}.\]</div>
-<p><span class="math">\(\Gamma\)</span> is the decay rate and <span class="math">\(c\)</span> along with its Hermitian conjugate <span class="math">\(c^{\dagger}\)</span> are the transition matrices
-of the n level system.
-The documentation also has some extra information.
-For now only radiative decay is considered (no dephasing).</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>Hamiltonian</strong> &#8211; Complex ndarray. Hamiltonian.</li>
-<li><strong>Gamma</strong> &#8211; Ndarray. Decay matrix.</li>
-<li><strong>rho</strong> &#8211; Complex ndarray. density matrix.</li>
-</ul>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">Complex ndarray. Time derivative of the density matrix.</p>
-</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-<dl class="function">
-<dt id="density_matrix_classes.nlevel.time_evolve">
-<code class="descclassname">density_matrix_classes.nlevel.</code><code class="descname">time_evolve</code><span class="sig-paren">(</span><em>Hamiltonian</em>, <em>Gamma</em>, <em>rho</em>, <em>closed</em>, <em>dt</em>, <em>nt</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/density_matrix_classes/nlevel.html#time_evolve"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#density_matrix_classes.nlevel.time_evolve" title="Permalink to this definition">¶</a></dt>
-<dd><p>Perform multiple time step evolutions starting with the initial density matrix self.Dens_i.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>Hamiltonian</strong> &#8211; Complex array. Hamiltonian.</li>
-<li><strong>dt</strong> &#8211; Float. Time step.</li>
-<li><strong>nt</strong> &#8211; Int. Number of time steps.</li>
-</ul>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">Complex array. Density matrix after evolving for many time steps.</p>
-</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-</div>
-<div class="section" id="module-density_matrix_classes.physicalconstants">
-<span id="physicalconstants-module"></span><h2>1.5 physicalconstants module<a class="headerlink" href="#module-density_matrix_classes.physicalconstants" title="Permalink to this headline">¶</a></h2>
-</div>
 <div class="section" id="module-density_matrix_classes">
 <span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-density_matrix_classes" title="Permalink to this headline">¶</a></h2>
 <p>A pypi demonstration vehicle.</p>
@@ -678,10 +678,10 @@ For now only radiative decay is considered (no dephasing).</p>
   <ul>
 <li><a class="reference internal" href="#">1 density_matrix_classes package</a><ul>
 <li><a class="reference internal" href="#module-density_matrix_classes.Atomic_Simulation_Classes">1.1 Atomic_Simulation_Classes module</a></li>
-<li><a class="reference internal" href="#module-density_matrix_classes.Data_Saving_Functions">1.2 Data_Saving_Functions module</a></li>
+<li><a class="reference internal" href="#module-density_matrix_classes.nlevel">1.2 nlevel module</a></li>
 <li><a class="reference internal" href="#module-density_matrix_classes.Inhomogeneous_Broadening_Classes">1.3 Inhomogeneous_Broadening_Classes module</a></li>
-<li><a class="reference internal" href="#module-density_matrix_classes.nlevel">1.4 nlevel module</a></li>
-<li><a class="reference internal" href="#module-density_matrix_classes.physicalconstants">1.5 physicalconstants module</a></li>
+<li><a class="reference internal" href="#module-density_matrix_classes.physicalconstants">1.4 physicalconstants module</a></li>
+<li><a class="reference internal" href="#module-density_matrix_classes.Data_Saving_Functions">1.5 Data_Saving_Functions module</a></li>
 <li><a class="reference internal" href="#module-density_matrix_classes">Module contents</a></li>
 </ul>
 </li>

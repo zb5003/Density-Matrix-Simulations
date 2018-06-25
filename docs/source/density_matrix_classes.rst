@@ -11,10 +11,10 @@ The time evolution is calculated using the Lindblad form of the master equation.
     :undoc-members:
     :show-inheritance:
 
-1.2 Data_Saving_Functions module
----------------------------------------------------
+1.2 nlevel module
+------------------------------------
 
-.. automodule:: density_matrix_classes.Data_Saving_Functions
+.. automodule:: density_matrix_classes.nlevel
     :members:
     :undoc-members:
     :show-inheritance:
@@ -27,18 +27,18 @@ The time evolution is calculated using the Lindblad form of the master equation.
     :undoc-members:
     :show-inheritance:
 
-1.4 nlevel module
-------------------------------------
-
-.. automodule:: density_matrix_classes.nlevel
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-1.5 physicalconstants module
+1.4 physicalconstants module
 -----------------------------------------------
 
 .. automodule:: density_matrix_classes.physicalconstants
+    :members:
+    :undoc-members:
+    :show-inheritance:
+	
+1.5 Data_Saving_Functions module
+---------------------------------------------------
+
+.. automodule:: density_matrix_classes.Data_Saving_Functions
     :members:
     :undoc-members:
     :show-inheritance:

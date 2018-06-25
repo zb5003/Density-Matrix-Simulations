@@ -81,7 +81,7 @@ dipole_operator = 0.063 * muB * sp.asarray([[0, 0, 0, 0, sp.sqrt(0.03), sp.sqrt(
                                             [sp.sqrt(0.03), sp.sqrt(0.12), sp.sqrt(0.85), 0, 0, 0, 0],
                                             [sp.sqrt(0.22), sp.sqrt(0.68), sp.sqrt(0.10), 0, 0, 0, 0],
                                             [sp.sqrt(0.75), sp.sqrt(0.2), sp.sqrt(0.05), 0, 0, 0, 0]])
-Rabi_f = a0 * e_charge * field_amplitude / hbar
+Rabi_f = 0.063 * muB * field_amplitude / hbar
 
 other_freq = sp.asarray([[upper_spacing_153[0] - lower_spacing_153[0], upper_spacing_153[0], upper_spacing_153[0] + lower_spacing_153[1]],
                          [-lower_spacing_153[0], 0, lower_spacing_153[1]],
