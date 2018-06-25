@@ -64,7 +64,7 @@ intensity = power / (2 * sp.pi * waist**2)
 field_amplitude = sp.sqrt(4 * mu0 * n_refraction * power / (c * sp.pi * waist**2))
 
 # Interaction parameters
-detuning = 0
+detuning = -(-148e6 + 183e6)
 lower_spacing_151 = 2 * sp.pi * sp.asarray([57.3 * 10**6, 29.5 * 10**6], dtype=sp.float64)
 upper_spacing_151 = 2 * sp.pi * sp.asarray([71 * 10**6, 43 * 10**6], dtype=sp.float64)
 frequencies_151 = frequency_matrix_generator(detuning, lower_spacing_151, upper_spacing_151)
@@ -83,6 +83,10 @@ dipole_operator = 0.063 * muB * sp.asarray([[0, 0, 0, 0, sp.sqrt(0.03), sp.sqrt(
                                             [sp.sqrt(0.75), sp.sqrt(0.2), sp.sqrt(0.05), 0, 0, 0, 0]])
 Rabi_f = a0 * e_charge * field_amplitude / hbar
 
+other_freq = sp.asarray([[upper_spacing_153[0] - lower_spacing_153[0], upper_spacing_153[0], upper_spacing_153[0] + lower_spacing_153[1]],
+                         [-lower_spacing_153[0], 0, lower_spacing_153[1]],
+                         [-upper_spacing_153[1] - lower_spacing_153[0], -upper_spacing_153[1], -upper_spacing_153[1] + lower_spacing_153[1]]])
+print(other_freq / 1e6)
 # Simulation parameters
 dt = 0.5e-10
 nt = 42000
