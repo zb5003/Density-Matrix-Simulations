@@ -50,11 +50,12 @@ def rho_13_full(del_om, del_om_p, dip_p, dip_c, field_p, field_c, gamma21, gamma
     return numerator / denominator
 
 gamma = 1 / 33e-6
-gamma21 = 5e6
+gamma21 = 5e4
 gamma31 = 2e6
+lambd = 527e-9
 
 n = 1.8
-power_c = 60e-6
+power_c = 60e-3
 waist_c = 112e-6 / 2
 intensity_c = power_c / (2 * sp.pi * waist_c**2)
 field_amplitude_c = sp.sqrt(4 * mu0 * n * power_c / (c * sp.pi * waist_c**2))
@@ -86,7 +87,7 @@ fig, ax = plt.subplots(nrows=2, ncols=1)
 fig.subplots_adjust(hspace=0.5)
 # ax[0].plot(sp.asarray(detunings / 1e6), single_reponse.real, label="real")
 ax[0].plot(sp.asarray(detunings / 1e6), single_reponse.imag, label="imag")
-ax[0].plot(sp.asarray(detunings / 1e6), sp.exp(single_reponse.imag), label="imag")
+ax[0].plot(sp.asarray(detunings / 1e6), sp.exp(-4 * sp.pi / lambd * single_reponse.imag / 2 * 0.01 / 1e4), label="imag")
 ax[0].axhline(0, color='black', linewidth=0.5)
 ax[0].axvline(sp.sqrt(9/80) * gamma / 1e6, color='black', linewidth=0.5)
 ax[0].axvline(-sp.sqrt(9/80) * gamma / 1e6, color='black', linewidth=0.5)
@@ -99,8 +100,8 @@ ax[0].legend()
 # ax[1].plot(sp.asarray(detunings / 1e6), response.imag, label="imag")
 # ax[1].plot(sp.asarray(detunings / 1e6), single_response_full.real, label="real")
 ax[1].plot(sp.asarray(detunings / 1e6), single_response_full.imag, label="imag")
-ax[1].plot(sp.asarray(detunings / 1e6), sp.exp(-10 * single_response_full.imag), label="imag")
-ax[1].set_xlabel("Detuning (kHz)")
+ax[1].plot(sp.asarray(detunings / 1e6), sp.exp(-4 * sp.pi / lambd * single_response_full.imag / 2 * 0.01 / (1.6e9 / gamma31)), label="Transmission")
+ax[1].set_xlabel("Detuning (MHz)")
 ax[1].set_ylabel("Amplitude (arb. units)")
 ax[1].axhline(0, color='black', linewidth=1)
 ax[1].axvline(0, color='black', linewidth=1)
