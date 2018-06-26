@@ -55,7 +55,7 @@ gamma31 = 2e6
 lambd = 527e-9
 
 n = 1.8
-power_c = 250e-3
+power_c = 500e-3
 waist_c = 112e-6 / 2
 intensity_c = power_c / (2 * sp.pi * waist_c**2)
 field_amplitude_c = sp.sqrt(4 * mu0 * n * power_c / (c * sp.pi * waist_c**2))
@@ -63,7 +63,7 @@ dip_c = 0.063 * muB * sp.sqrt(0.75)
 # field_amplitude_c = hbar * gamma / (dip_c * sp.sqrt(10))  #  sp.sqrt(4 * mu0 * n * power_c / (c * sp.pi * waist_c**2))
 offset_c = 0
 
-power_p = 1e-6
+power_p = 10e-6
 waist_p = 50e-6 / 2
 intensity_p = power_p / (2 * sp.pi * waist_p**2)
 field_amplitude_p = sp.sqrt(4 * mu0 * n * power_p / (c * sp.pi * waist_p**2))
@@ -102,7 +102,7 @@ fig.subplots_adjust(hspace=0.5)
 # ax[1].plot(sp.asarray(detunings / 1e6), single_response_full.real, label="real")
 ax.plot(sp.asarray(detunings / 1e6), single_response_full.imag, label=r"$\Im[\chi(\Omega_c=$" + str(round(Rabi_freq(dip_c, field_amplitude_c) / 1e6, 1)) + " MHz)]")
 ax.plot(sp.asarray(detunings / 1e6), single_response_full_2.imag, label=r"$\Im[\chi(\Omega_c=$0 MHz)]")
-ax.plot(sp.asarray(detunings / 1e6), sp.exp(-(4 * sp.pi / lambd) * ((0.25 * single_response_full_2.imag + single_response_full.imag) / 2) * 0.01 / (1.6e9 / gamma31)), label=r"Transmission $\Omega_c=$" + str(round(Rabi_freq(dip_c, field_amplitude_c) / 1e6, 1)) + " MHz")
+ax.plot(sp.asarray(detunings / 1e6), sp.exp(-(4 * sp.pi / lambd) * ((0 * single_response_full_2.imag + single_response_full.imag) / 2) * 0.01 / (1.6e9 / gamma31)), label=r"Transmission $\Omega_c=$" + str(round(Rabi_freq(dip_c, field_amplitude_c) / 1e6, 1)) + " MHz")
 ax.plot(sp.asarray(detunings / 1e6), sp.exp(-(4 * sp.pi / lambd) * (single_response_full_2.imag/ 2) * 0.01 / (1.6e9 / gamma31)), label="Transmission $\Omega_c=$0 MHz")
 ax.set_xlabel("Detuning (MHz)")
 ax.set_ylabel("Amplitude (arb. units)")
