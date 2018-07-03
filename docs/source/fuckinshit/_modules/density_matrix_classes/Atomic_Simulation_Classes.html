@@ -1,0 +1,366 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>density_matrix_classes.Atomic_Simulation_Classes &mdash; Density_Matrix_Simulation 0.0.1 documentation</title>
+    
+    <link rel="stylesheet" href="../../_static/classic.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../',
+        VERSION:     '0.0.1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="top" title="Density_Matrix_Simulation 0.0.1 documentation" href="../../index.html" />
+    <link rel="up" title="density_matrix_classes" href="../density_matrix_classes.html" /> 
+  </head>
+  <body role="document">
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../index.html">Density_Matrix_Simulation 0.0.1 documentation</a> &raquo;</li>
+          <li class="nav-item nav-item-1"><a href="../index.html" >Module code</a> &raquo;</li>
+          <li class="nav-item nav-item-2"><a href="../density_matrix_classes.html" accesskey="U">density_matrix_classes</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <h1>Source code for density_matrix_classes.Atomic_Simulation_Classes</h1><div class="highlight"><pre>
+<span class="kn">import</span> <span class="nn">time</span>
+<span class="kn">from</span> <span class="nn">density_matrix_classes.nlevel</span> <span class="kn">import</span> <span class="o">*</span>
+
+
+<div class="viewcode-block" id="sigmoid"><a class="viewcode-back" href="../../density_matrix_classes.html#density_matrix_classes.Atomic_Simulation_Classes.sigmoid">[docs]</a><span class="k">def</span> <span class="nf">sigmoid</span><span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="n">tau</span><span class="p">,</span> <span class="n">tau_0</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Represents the turn on of a beam.</span>
+<span class="sd">    </span>
+<span class="sd">    :param t: Float. The time.</span>
+<span class="sd">    :param tau: Float. Characteristic time scale for the turn on of the beam.</span>
+<span class="sd">    :param tau_0: Float. Time at which the beam turns on.</span>
+<span class="sd">    :return: Float. Amplitude of the beam as it turns on.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="mi">1</span> <span class="o">/</span> <span class="p">(</span><span class="mi">1</span> <span class="o">+</span> <span class="n">sp</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="o">-</span><span class="p">(</span><span class="n">t</span> <span class="o">-</span> <span class="n">tau_0</span><span class="p">)</span> <span class="o">/</span> <span class="n">tau</span><span class="p">))</span></div>
+
+<div class="viewcode-block" id="atom"><a class="viewcode-back" href="../../density_matrix_classes.html#density_matrix_classes.Atomic_Simulation_Classes.atom">[docs]</a><span class="k">class</span> <span class="nc">atom</span><span class="p">:</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
+                 <span class="n">state</span><span class="p">,</span>
+                 <span class="n">decay</span><span class="p">,</span>
+                 <span class="n">closed</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Create an atom instance with initial state &#39;state&#39; whose levels decay according to the </span>
+<span class="sd">        matrix decay.</span>
+<span class="sd">        </span>
+<span class="sd">        :param state: The initial state of the system.  This is used in two attributes: one to </span>
+<span class="sd">                      save the initial state (self.initial_state) and one to update as the</span>
+<span class="sd">                      atom evolves (self.current_state).</span>
+<span class="sd">        :param decay: Matrix describing the decay of the system.</span>
+<span class="sd">        :param closed: Array detailing the decay rate from each excited state to each ground state.</span>
+<span class="sd">                       This array is used to add population back into the system, thus making it closed.</span>
+<span class="sd">                       The (i, j)th element represents decay from the jth state to the ith state.</span>
+<span class="sd">                       The elements of the array should be the square roots of the transition decay rates.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">initial_state</span> <span class="o">=</span> <span class="n">state</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">current_state</span> <span class="o">=</span> <span class="n">state</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">decay</span> <span class="o">=</span> <span class="n">decay</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">closed</span> <span class="o">=</span> <span class="n">closed</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">c</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">c_T</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">generate_c</span><span class="p">(</span><span class="n">closed</span><span class="p">)</span>
+
+<div class="viewcode-block" id="atom.generate_c"><a class="viewcode-back" href="../../density_matrix_classes.html#density_matrix_classes.Atomic_Simulation_Classes.atom.generate_c">[docs]</a>    <span class="k">def</span> <span class="nf">generate_c</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dec_to_mat</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Split dec_to_mat into two lists.</span>
+
+<span class="sd">        One list is a list of lower operators, the other is a list of raising operators.</span>
+<span class="sd">        These operators are used to simulate the decay of a closed system.</span>
+<span class="sd">        </span>
+<span class="sd">        :param dec_to_mat: Ndarray. Describes the decay from state j to state i.</span>
+<span class="sd">        :return: Two lists of ndarrays. The first contains lower operators relevant to the decay, the other contains the relevant raising operators.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">dim1</span><span class="p">,</span> <span class="n">dim2</span> <span class="o">=</span> <span class="n">sp</span><span class="o">.</span><span class="n">shape</span><span class="p">(</span><span class="n">dec_to_mat</span><span class="p">)</span>
+        <span class="n">dim3</span> <span class="o">=</span> <span class="n">sp</span><span class="o">.</span><span class="n">count_nonzero</span><span class="p">(</span><span class="n">dec_to_mat</span><span class="p">)</span>
+        <span class="n">c</span> <span class="o">=</span> <span class="n">sp</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">dim3</span><span class="p">,</span> <span class="n">dim1</span><span class="p">,</span> <span class="n">dim2</span><span class="p">))</span>
+        <span class="n">c_T</span> <span class="o">=</span> <span class="n">sp</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">dim3</span><span class="p">,</span> <span class="n">dim1</span><span class="p">,</span> <span class="n">dim2</span><span class="p">))</span>
+        <span class="n">k</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">dim1</span> <span class="o">-</span> <span class="mi">1</span><span class="p">):</span>
+            <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="n">dim1</span><span class="p">):</span>
+                <span class="k">if</span> <span class="n">dec_to_mat</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">]</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>
+                    <span class="n">c</span><span class="p">[</span><span class="n">k</span><span class="p">,</span> <span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">]</span> <span class="o">=</span> <span class="n">dec_to_mat</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">]</span>
+                    <span class="n">c_T</span><span class="p">[</span><span class="n">k</span><span class="p">,</span> <span class="n">j</span><span class="p">,</span> <span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">dec_to_mat</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">]</span>
+                    <span class="n">k</span> <span class="o">=</span> <span class="n">k</span> <span class="o">+</span> <span class="mi">1</span>
+        <span class="c1"># print(c, c_T)</span>
+        <span class="k">return</span> <span class="n">c</span><span class="p">,</span> <span class="n">c_T</span></div>
+
+<div class="viewcode-block" id="atom.evolve_step"><a class="viewcode-back" href="../../density_matrix_classes.html#density_matrix_classes.Atomic_Simulation_Classes.atom.evolve_step">[docs]</a>    <span class="k">def</span> <span class="nf">evolve_step</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
+                    <span class="n">hamiltonian</span><span class="p">,</span>
+                    <span class="n">dt</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Preform one step of the time evolution of the atom.</span>
+
+<span class="sd">        Uses the fourth order Runge-Kutta method (found in nlevel.py).</span>
+<span class="sd">        The instance attribute current_state is updated to the new time-evolved state.</span>
+<span class="sd">        </span>
+<span class="sd">        :param hamiltonian: Ndarray. The Hamiltonian at a particular time.</span>
+<span class="sd">        :param dt: Float. Time step over which to preform the time evolution.</span>
+<span class="sd">        :return: Complex ndarray. The time-evolved state.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">current_state</span> <span class="o">=</span> <span class="n">RK_rho</span><span class="p">(</span><span class="n">hamiltonian</span><span class="p">,</span>
+                                    <span class="bp">self</span><span class="o">.</span><span class="n">decay</span><span class="p">,</span>
+                                    <span class="bp">self</span><span class="o">.</span><span class="n">current_state</span><span class="p">,</span>
+                                    <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">c</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">c_T</span><span class="p">],</span>
+                                    <span class="n">dt</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">current_state</span></div></div>
+
+<div class="viewcode-block" id="hamiltonian_construct"><a class="viewcode-back" href="../../density_matrix_classes.html#density_matrix_classes.Atomic_Simulation_Classes.hamiltonian_construct">[docs]</a><span class="k">class</span> <span class="nc">hamiltonian_construct</span><span class="p">:</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
+                 <span class="n">dipoles</span><span class="p">,</span>
+                 <span class="n">field</span><span class="p">,</span>
+                 <span class="n">freq</span><span class="p">,</span>
+                 <span class="n">pulse_sequence</span><span class="o">=</span><span class="n">sigmoid</span><span class="p">,</span>
+                 <span class="n">pulse_params</span><span class="o">=</span><span class="p">(</span><span class="mf">9e-9</span><span class="p">,</span> <span class="mf">90e-9</span><span class="p">)):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        This class produces a realistic time dependent Hamiltonian (i.e. includes laser turn on) </span>
+<span class="sd">        in the interaction picture and dipole approximation. Each instance describes a single beam.</span>
+<span class="sd">        </span>
+<span class="sd">        :param dipoles: Ndarray. Matrix of dipole moments between states (could be electric or magnetic).</span>
+<span class="sd">        :param field: Float. Amplitude of the (electric or magnetic) field.</span>
+<span class="sd">        :param freq: Ndarray. Matrix containing the frequencies at which the Hamiltonian matrix elements</span>
+<span class="sd">                     oscillate.</span>
+<span class="sd">        :param pulse_sequence: Function.  Describes the pulse sequence of the beam.</span>
+<span class="sd">        :param pulse_params: Tuple.  Contains the parameters, other than time, for pulse_sequence.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">dipoles</span> <span class="o">=</span> <span class="n">dipoles</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">field</span> <span class="o">=</span> <span class="n">field</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">freq</span> <span class="o">=</span> <span class="n">freq</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">pulse_sequence</span> <span class="o">=</span> <span class="n">pulse_sequence</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">pulse_params</span> <span class="o">=</span> <span class="n">pulse_params</span>
+
+        <span class="c1"># For reference</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">rabi_freqs</span> <span class="o">=</span> <span class="n">dipoles</span> <span class="o">*</span> <span class="n">field</span> <span class="o">/</span> <span class="n">hbar</span>
+
+<div class="viewcode-block" id="hamiltonian_construct.carrier"><a class="viewcode-back" href="../../density_matrix_classes.html#density_matrix_classes.Atomic_Simulation_Classes.hamiltonian_construct.carrier">[docs]</a>    <span class="k">def</span> <span class="nf">carrier</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">t</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Calculate the interaction picture Hamiltonian with instantaneous laser turn on time.</span>
+
+<span class="sd">        The amplitudes of each of the Hamiltonian matrix elements are constant while the phases evolve in time.</span>
+<span class="sd">        </span>
+<span class="sd">        :param t: Float. The time.</span>
+<span class="sd">        :return: Complex ndarray. The constant element amplitude Hamiltonian at time t.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">time_dep</span> <span class="o">=</span> <span class="n">sp</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="mi">1j</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">freq</span> <span class="o">*</span> <span class="n">t</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">field</span> <span class="o">*</span> <span class="n">sp</span><span class="o">.</span><span class="n">multiply</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dipoles</span><span class="p">,</span> <span class="n">time_dep</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="hamiltonian_construct.envelope"><a class="viewcode-back" href="../../density_matrix_classes.html#density_matrix_classes.Atomic_Simulation_Classes.hamiltonian_construct.envelope">[docs]</a>    <span class="k">def</span> <span class="nf">envelope</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">t</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Caluclate the modulation of the interaction picture amplitude of the elements of the Hamiltonian.</span>
+
+
+<span class="sd">        The physical interpretation of the modulation is the finite turn on time of any laser.</span>
+<span class="sd">        The turn on is modeled by the attribute pulse_sequence.</span>
+<span class="sd">        </span>
+<span class="sd">        :param t: Float. The time.</span>
+<span class="sd">        :return: Float. Relative field amplitude at time t.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">all_params</span> <span class="o">=</span> <span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="p">)</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">pulse_params</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">pulse_sequence</span><span class="p">(</span><span class="o">*</span><span class="n">all_params</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="hamiltonian_construct.hamiltonian"><a class="viewcode-back" href="../../density_matrix_classes.html#density_matrix_classes.Atomic_Simulation_Classes.hamiltonian_construct.hamiltonian">[docs]</a>    <span class="k">def</span> <span class="nf">hamiltonian</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">t</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Construct the total interaction Hamiltonian at time t.</span>
+
+<span class="sd">         The total Hamiltonian is constructed by combining the results of envelope() and carrier().</span>
+<span class="sd">         </span>
+<span class="sd">        :param t: Float. The time.</span>
+<span class="sd">        :return: Complex ndarray. The full Hamiltonian at time t.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">envelope</span><span class="p">(</span><span class="n">t</span><span class="p">)</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">carrier</span><span class="p">(</span><span class="n">t</span><span class="p">)</span> <span class="o">/</span> <span class="mi">2</span></div></div>
+
+<div class="viewcode-block" id="single_atom_simulation"><a class="viewcode-back" href="../../density_matrix_classes.html#density_matrix_classes.Atomic_Simulation_Classes.single_atom_simulation">[docs]</a><span class="k">class</span> <span class="nc">single_atom_simulation</span><span class="p">:</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
+                 <span class="n">system</span><span class="p">,</span>
+                 <span class="n">ham_obj</span><span class="p">,</span>
+                 <span class="n">nt</span><span class="p">,</span>
+                 <span class="n">dt</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Create an instance of a simulation that calculates the time evolution of a single atom interacting</span>
+<span class="sd">        with a single laser.</span>
+<span class="sd">        </span>
+<span class="sd">        :param system: An instance of the class atom.</span>
+<span class="sd">        :param ham_obj: A list of instances of the class hamiltonian_construct.</span>
+<span class="sd">                        IMPORTANT: The first element of this list will be the laser that is</span>
+<span class="sd">                                   swept for the susceptibility plot.</span>
+<span class="sd">        :param nt: Float. Number of time steps in the simulation.</span>
+<span class="sd">        :param dt: Float. Time step.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">system</span> <span class="o">=</span> <span class="n">system</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">ham_obj</span> <span class="o">=</span> <span class="n">ham_obj</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">nt</span> <span class="o">=</span> <span class="n">nt</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">dt</span> <span class="o">=</span> <span class="n">dt</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">duration</span> <span class="o">=</span> <span class="n">nt</span> <span class="o">*</span> <span class="n">dt</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">evolver</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">t</span><span class="p">:</span> <span class="nb">sum</span><span class="p">([</span><span class="n">k</span><span class="o">.</span><span class="n">hamiltonian</span><span class="p">(</span><span class="n">t</span><span class="p">)</span> <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">ham_obj</span><span class="p">])</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">freq_default</span> <span class="o">=</span> <span class="n">ham_obj</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">freq</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">mask</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">generate_mask</span><span class="p">()</span>
+
+<div class="viewcode-block" id="single_atom_simulation.generate_mask"><a class="viewcode-back" href="../../density_matrix_classes.html#density_matrix_classes.Atomic_Simulation_Classes.single_atom_simulation.generate_mask">[docs]</a>    <span class="k">def</span> <span class="nf">generate_mask</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Record the nonzero matrix elements of the Hamiltonian.</span>
+
+<span class="sd">        The mask will mainly be used for detuning the laser beam from the target transition.</span>
+<span class="sd">        </span>
+<span class="sd">        :return: Ndarray. Elements are one for nonzero Hamiltonian elements and zero otherwise.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">detune_mask</span> <span class="o">=</span> <span class="n">sp</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">sp</span><span class="o">.</span><span class="n">shape</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">system</span><span class="o">.</span><span class="n">initial_state</span><span class="p">))</span>  <span class="c1"># Set / reset mask</span>
+        <span class="n">detune_mask</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">ham_obj</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">dipoles</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span>  <span class="c1"># Select only nonzero matrix elements of the Hamiltonian</span>
+        <span class="k">return</span> <span class="n">sp</span><span class="o">.</span><span class="n">triu</span><span class="p">(</span><span class="n">detune_mask</span><span class="p">)</span> <span class="o">-</span> <span class="n">sp</span><span class="o">.</span><span class="n">tril</span><span class="p">(</span><span class="n">detune_mask</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="single_atom_simulation.detune"><a class="viewcode-back" href="../../density_matrix_classes.html#density_matrix_classes.Atomic_Simulation_Classes.single_atom_simulation.detune">[docs]</a>    <span class="k">def</span> <span class="nf">detune</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">detuning</span><span class="p">,</span> <span class="n">ham</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Detune the frequencies in the a specific beam Hamiltonian.</span>
+<span class="sd">        </span>
+<span class="sd">        :param detuning: Float.  By how much the beam will be detuned by. Negative for red detuning, positive for blue.</span>
+<span class="sd">        :param ham: Int. Specify which beam to detune if there are multiple beams.  The default is the beam that comes first in ham_obj.</span>
+<span class="sd">        :return: None.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">ham_obj</span><span class="p">[</span><span class="n">ham</span><span class="p">]</span><span class="o">.</span><span class="n">freq</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">freq_default</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">mask</span> <span class="o">*</span> <span class="n">detuning</span>
+        <span class="k">return</span> <span class="bp">None</span></div>
+
+<div class="viewcode-block" id="single_atom_simulation.reset_state"><a class="viewcode-back" href="../../density_matrix_classes.html#density_matrix_classes.Atomic_Simulation_Classes.single_atom_simulation.reset_state">[docs]</a>    <span class="k">def</span> <span class="nf">reset_state</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Return the system to its original state.</span>
+<span class="sd">        </span>
+<span class="sd">        :return: None.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">system</span><span class="o">.</span><span class="n">current_state</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">system</span><span class="o">.</span><span class="n">initial_state</span>
+        <span class="k">return</span> <span class="bp">None</span></div>
+
+<div class="viewcode-block" id="single_atom_simulation.envelope_extract"><a class="viewcode-back" href="../../density_matrix_classes.html#density_matrix_classes.Atomic_Simulation_Classes.single_atom_simulation.envelope_extract">[docs]</a>    <span class="k">def</span> <span class="nf">envelope_extract</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">state</span><span class="p">,</span> <span class="n">t</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Extract the envelope of the density matrix amplitudes.</span>
+<span class="sd">        </span>
+<span class="sd">        :param state: Complex ndarray. The density matrix.</span>
+<span class="sd">        :param t: Float. The time.</span>
+<span class="sd">        :return: Complex ndarray. Matrix containing the amplitudes of envelope of the density matrix elements.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">state</span> <span class="o">*</span> <span class="n">sp</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="o">-</span><span class="mi">1j</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">ham_obj</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">freq</span> <span class="o">*</span> <span class="n">t</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="single_atom_simulation.final_state"><a class="viewcode-back" href="../../density_matrix_classes.html#density_matrix_classes.Atomic_Simulation_Classes.single_atom_simulation.final_state">[docs]</a>    <span class="k">def</span> <span class="nf">final_state</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Calculate the state of the system after evolving in time.</span>
+
+<span class="sd">        The amount of time that the system is evolved for is determined by the attributes nt and dt, t = nt * dt.</span>
+<span class="sd">        </span>
+<span class="sd">        :return: Complex ndarray. The final density matrix of the system.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">times</span> <span class="o">=</span> <span class="n">sp</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">duration</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">nt</span><span class="p">,</span> <span class="n">endpoint</span><span class="o">=</span><span class="bp">False</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">times</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">system</span><span class="o">.</span><span class="n">evolve_step</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">evolver</span><span class="p">(</span><span class="n">i</span><span class="p">),</span> <span class="bp">self</span><span class="o">.</span><span class="n">dt</span><span class="p">)</span>
+        <span class="n">final_untrans</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">envelope_extract</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">system</span><span class="o">.</span><span class="n">current_state</span><span class="p">,</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">nt</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">dt</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">final_untrans</span></div>
+
+<div class="viewcode-block" id="single_atom_simulation.susceptibility"><a class="viewcode-back" href="../../density_matrix_classes.html#density_matrix_classes.Atomic_Simulation_Classes.single_atom_simulation.susceptibility">[docs]</a>    <span class="k">def</span> <span class="nf">susceptibility</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">detunings</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Calculate the frequency dependent susceptibility for the system.</span>
+
+<span class="sd">        The susceptibility is calculated for the first beam in attribute ham_obj.</span>
+<span class="sd">        </span>
+<span class="sd">        :param detunings:  Ndarray. The detunings (in Hz) to sweep through for the susceptibility plot.</span>
+<span class="sd">        :return: Complex ndarray. The value of the susceptibility at each detuning.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">dim1</span><span class="p">,</span> <span class="n">dim2</span> <span class="o">=</span> <span class="n">sp</span><span class="o">.</span><span class="n">shape</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">system</span><span class="o">.</span><span class="n">initial_state</span><span class="p">)</span>
+        <span class="n">chi</span> <span class="o">=</span> <span class="n">sp</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="nb">len</span><span class="p">(</span><span class="n">detunings</span><span class="p">),</span> <span class="n">dim1</span><span class="p">,</span> <span class="n">dim2</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">complex</span><span class="p">)</span>
+
+        <span class="k">for</span> <span class="n">index</span><span class="p">,</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">detunings</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">detune</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>
+            <span class="n">chi</span><span class="p">[</span><span class="n">index</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">final_state</span><span class="p">()</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">reset_state</span><span class="p">()</span>
+
+        <span class="k">return</span> <span class="n">chi</span></div>
+
+<div class="viewcode-block" id="single_atom_simulation.time_evolution"><a class="viewcode-back" href="../../density_matrix_classes.html#density_matrix_classes.Atomic_Simulation_Classes.single_atom_simulation.time_evolution">[docs]</a>    <span class="k">def</span> <span class="nf">time_evolution</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">detuning</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Calculate the state of the system at each of the nt time steps of size dt.</span>
+<span class="sd">        </span>
+<span class="sd">        :return: Complex ndarray. The density matrix at ever timestep of the simulation.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">t1</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">detune</span><span class="p">(</span><span class="n">detuning</span><span class="p">)</span>
+        <span class="n">row</span><span class="p">,</span> <span class="n">column</span> <span class="o">=</span> <span class="n">sp</span><span class="o">.</span><span class="n">shape</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">system</span><span class="o">.</span><span class="n">initial_state</span><span class="p">)</span>
+        <span class="n">times</span> <span class="o">=</span> <span class="n">sp</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">duration</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">nt</span><span class="p">,</span> <span class="n">endpoint</span><span class="o">=</span><span class="bp">False</span><span class="p">)</span>
+        <span class="n">time_dep_state</span> <span class="o">=</span> <span class="n">sp</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="bp">self</span><span class="o">.</span><span class="n">nt</span><span class="p">,</span> <span class="n">row</span><span class="p">,</span> <span class="n">column</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">complex</span><span class="p">)</span>
+
+        <span class="k">for</span> <span class="n">index</span><span class="p">,</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">times</span><span class="p">):</span>
+            <span class="n">time_dep_state</span><span class="p">[</span><span class="n">index</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">envelope_extract</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">system</span><span class="o">.</span><span class="n">evolve_step</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">evolver</span><span class="p">(</span><span class="n">i</span><span class="p">),</span> <span class="bp">self</span><span class="o">.</span><span class="n">dt</span><span class="p">),</span> <span class="n">i</span><span class="p">)</span>
+        <span class="n">t2</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span> <span class="o">-</span> <span class="n">t1</span>
+        <span class="k">print</span><span class="p">(</span><span class="s2">&quot;Detuning =&quot;</span><span class="p">,</span> <span class="nb">round</span><span class="p">(</span><span class="n">detuning</span> <span class="o">/</span> <span class="mf">1e6</span><span class="p">,</span> <span class="mi">4</span><span class="p">),</span> <span class="s2">&quot;MHz&quot;</span><span class="p">,</span> <span class="s2">&quot;Time elapsed =&quot;</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="nb">round</span><span class="p">(</span><span class="n">t2</span><span class="p">,</span> <span class="mi">4</span><span class="p">)),</span> <span class="s2">&quot;seconds&quot;</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">time_dep_state</span></div></div>
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../index.html">Density_Matrix_Simulation 0.0.1 documentation</a> &raquo;</li>
+          <li class="nav-item nav-item-1"><a href="../index.html" >Module code</a> &raquo;</li>
+          <li class="nav-item nav-item-2"><a href="../density_matrix_classes.html" >density_matrix_classes</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &copy; Copyright 2018, Zachary Buckholtz.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.3.5.
+    </div>
+  </body>
+</html>

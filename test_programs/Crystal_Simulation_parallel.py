@@ -51,7 +51,7 @@ if __name__ == "__main__":
 
     # Save dat shit _______________________________________________________________
     populations_plot(parameters.the_times * 1e6, the_flop, loc)
-    crystal_pop_compare(parameters.the_times * 1e6, the_flop, loc)
+    # crystal_pop_compare(parameters.the_times * 1e6, the_flop, loc)
     coherence_plot(parameters.the_times * 1e6, the_flop, loc)
     total_coherence_7(parameters.the_times * 1e6, the_flop, loc)
     ground_v_excited_7(parameters.the_times * 1e6, the_flop, loc)

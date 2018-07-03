@@ -6,10 +6,12 @@ from density_matrix_classes.physicalconstants import *
 
 def file_manager(subfolder):
     """
-    Checks to see if a folder for that day's data exists.  If it does not exist, it is created.
-    Folder format is month_day_year/subfolder/.
-    :param subfolder: The name of the subfolder.  The format is power_value_length_value.
-    :return: Folder.
+    Check to see if a folder for that day's data exists and create it if it does not.
+
+    If it does not exist it is created with the directory format month_day_year/subfolder/.
+    
+    :param subfolder: String. The name of the subfolder.  The format is power_value_length_value.
+    :return: String. The directory and its path from the current folder.
     """
     months = {1: 'January', 2: 'February', 3: 'March', 4: 'April', 5: 'May',
               6: 'June', 7: 'July', 8: 'August', 9: 'September', 10: 'October',
@@ -28,9 +30,10 @@ def file_manager(subfolder):
 def populations_plot(times, density_m, location):
     """
     Plot the populations of each state versus time in separate files.
-    :param times: The times over which to plot the populations in microseconds.
-    :param density_m: The density matrix at each time step.
-    :param location: Directory where plots will be saved.
+    
+    :param times: Ndarray. The times over which to plot the populations in microseconds.
+    :param density_m: Complex ndarray. The density matrix at each time step.
+    :param location: String. Directory where plots will be saved.
     :return: None.
     """
     for i in range(sp.shape(density_m)[1]):
@@ -48,6 +51,7 @@ def populations_plot(times, density_m, location):
 def crystal_pop_compare(times, density_m, location):
     """
     Plot the populations of each state versus time in separate files.
+    
     :param times: The times over which to plot the populations in microseconds.
     :param density_m: The density matrix at each time step.
     :param location: Directory where plots will be saved.
@@ -83,6 +87,7 @@ def crystal_pop_compare(times, density_m, location):
 def coherence_plot(times, density_m, location):
     """
     Plot the coherences versus time in separate files.
+    
     :param times: The times over which to plot the populations in microseconds.
     :param density_m: The density matrix at each time step.
     :param location: Directory where plots will be saved.
@@ -107,6 +112,7 @@ def ground_v_excited_7(times, density_m, location):
     """
     Plot the dynamics of the sum of the three ground hyperfine state populations and the three excited hyperfine state
     populations.
+    
     :param times: The times over which to plot the populations in microseconds.
     :param density_m: The density matrix at each time step.
     :param location: Directory where plots will be saved.
@@ -142,6 +148,7 @@ def ground_v_excited_7(times, density_m, location):
 def total_coherence_7(times, density_m, location):
     """
     Plot the sum of all the off diagonal elements (in the upper triangle) versus time.
+    
     :param times: The times over which to plot the populations in microseconds.
     :param density_m: The density matrix at each time step.
     :param location: Directory where plots will be saved.
@@ -176,6 +183,7 @@ def ground_v_excited_2(times, density_m, location):
     """
     Plot the dynamics of the sum of the three ground hyperfine state populations and the three excited hyperfine state
     populations.
+    
     :param times: The times over which to plot the populations in microseconds.
     :param density_m: The density matrix at each time step.
     :param location: Directory where plots will be saved.
@@ -213,6 +221,7 @@ def ground_v_excited_2(times, density_m, location):
 def total_coherence_2(times, density_m, location):
     """
     Plot the sum of all the off diagonal elements (in the upper triangle) versus time.
+    
     :param times: The times over which to plot the populations in microseconds.
     :param density_m: The density matrix at each time step.
     :param location: Directory where plots will be saved.

@@ -1,0 +1,162 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>density_matrix_classes.Inhomogeneous_Broadening_Classes &mdash; Density_Matrix_Simulation 0.0.1 documentation</title>
+    
+    <link rel="stylesheet" href="../../_static/classic.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../',
+        VERSION:     '0.0.1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="top" title="Density_Matrix_Simulation 0.0.1 documentation" href="../../index.html" />
+    <link rel="up" title="density_matrix_classes" href="../density_matrix_classes.html" /> 
+  </head>
+  <body role="document">
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../index.html">Density_Matrix_Simulation 0.0.1 documentation</a> &raquo;</li>
+          <li class="nav-item nav-item-1"><a href="../index.html" >Module code</a> &raquo;</li>
+          <li class="nav-item nav-item-2"><a href="../density_matrix_classes.html" accesskey="U">density_matrix_classes</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <h1>Source code for density_matrix_classes.Inhomogeneous_Broadening_Classes</h1><div class="highlight"><pre>
+<span class="kn">import</span> <span class="nn">scipy</span> <span class="kn">as</span> <span class="nn">sp</span>
+<span class="kn">from</span> <span class="nn">density_matrix_classes.Atomic_Simulation_Classes</span> <span class="kn">import</span> <span class="o">*</span>
+
+<div class="viewcode-block" id="inhomogeneous_broadening"><a class="viewcode-back" href="../../density_matrix_classes.html#density_matrix_classes.Inhomogeneous_Broadening_Classes.inhomogeneous_broadening">[docs]</a><span class="k">class</span> <span class="nc">inhomogeneous_broadening</span><span class="p">:</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
+                 <span class="n">sing_sim</span><span class="p">,</span>
+                 <span class="n">linewidth</span><span class="p">,</span>
+                 <span class="n">n_atoms</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">        :param sing_sim: Instance of single_atom_simulation.</span>
+<span class="sd">        :param linewidth: Inhomogeneous linewidth.</span>
+<span class="sd">        :param n_atoms: Number of atoms to be spread throughout the inhomogeneous linewidth.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">sing_sim</span> <span class="o">=</span> <span class="n">sing_sim</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">linewidth</span> <span class="o">=</span> <span class="n">linewidth</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">n_atoms</span> <span class="o">=</span> <span class="n">n_atoms</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">detunings</span> <span class="o">=</span> <span class="n">sp</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="o">-</span><span class="n">linewidth</span> <span class="o">/</span> <span class="mi">2</span><span class="p">,</span> <span class="n">linewidth</span> <span class="o">/</span> <span class="mi">2</span><span class="p">,</span> <span class="n">n_atoms</span><span class="p">)</span>
+
+<div class="viewcode-block" id="inhomogeneous_broadening.broadened_time_evolution"><a class="viewcode-back" href="../../density_matrix_classes.html#density_matrix_classes.Inhomogeneous_Broadening_Classes.inhomogeneous_broadening.broadened_time_evolution">[docs]</a>    <span class="k">def</span> <span class="nf">broadened_time_evolution</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Calculate the state of all the atoms in the inhomogeneous line at each of nt time steps of size dt.</span>
+
+<span class="sd">        Runs in serial using time_evolve_serial() from the single_atom_simulation class.</span>
+<span class="sd">        The detuning of each atom is produced by using the detune() method of this class, not the detuning arg in</span>
+<span class="sd">        time_evolve_serial()</span>
+<span class="sd">         </span>
+<span class="sd">        :return: Complex ndarray. The state of the system at each timestep averaged over the inhomogeneous line.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">dim1</span><span class="p">,</span> <span class="n">dim2</span> <span class="o">=</span> <span class="n">sp</span><span class="o">.</span><span class="n">shape</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">sing_sim</span><span class="o">.</span><span class="n">system</span><span class="o">.</span><span class="n">initial_state</span><span class="p">)</span>
+        <span class="n">time_dep_state</span> <span class="o">=</span> <span class="n">sp</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="bp">self</span><span class="o">.</span><span class="n">sing_sim</span><span class="o">.</span><span class="n">nt</span><span class="p">,</span> <span class="n">dim1</span><span class="p">,</span> <span class="n">dim2</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">complex</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">index_i</span><span class="p">,</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">detunings</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">sing_sim</span><span class="o">.</span><span class="n">reset_state</span><span class="p">()</span>
+            <span class="c1"># self.detune(i)</span>
+            <span class="n">time_dep_state</span> <span class="o">=</span> <span class="n">time_dep_state</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">sing_sim</span><span class="o">.</span><span class="n">time_evolution</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">time_dep_state</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">n_atoms</span></div>
+
+<div class="viewcode-block" id="inhomogeneous_broadening.detune"><a class="viewcode-back" href="../../density_matrix_classes.html#density_matrix_classes.Inhomogeneous_Broadening_Classes.inhomogeneous_broadening.detune">[docs]</a>    <span class="k">def</span> <span class="nf">detune</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
+               <span class="n">detuning</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Detune the original Hamiltonian.</span>
+<span class="sd">        </span>
+<span class="sd">        :param detuning: Float. The detuning in Hz.</span>
+<span class="sd">        :return: None.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">sing_sim</span><span class="o">.</span><span class="n">ham_obj</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">freq</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">sing_sim</span><span class="o">.</span><span class="n">freq_default</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">sing_sim</span><span class="o">.</span><span class="n">mask</span> <span class="o">*</span> <span class="n">detuning</span>
+
+        <span class="k">return</span> <span class="bp">None</span></div>
+
+<div class="viewcode-block" id="inhomogeneous_broadening.broadened_susceptibility"><a class="viewcode-back" href="../../density_matrix_classes.html#density_matrix_classes.Inhomogeneous_Broadening_Classes.inhomogeneous_broadening.broadened_susceptibility">[docs]</a>    <span class="k">def</span> <span class="nf">broadened_susceptibility</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">half_width</span><span class="p">,</span> <span class="n">na</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        In the works.</span>
+
+<span class="sd">        :return: </span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">detunings_local</span> <span class="o">=</span> <span class="n">sp</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="o">-</span><span class="n">half_width</span><span class="p">,</span> <span class="n">half_width</span><span class="p">,</span> <span class="n">na</span><span class="p">,</span> <span class="n">endpoint</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+        <span class="n">dim1</span><span class="p">,</span> <span class="n">dim2</span> <span class="o">=</span> <span class="n">sp</span><span class="o">.</span><span class="n">shape</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">sing_sim</span><span class="o">.</span><span class="n">system</span><span class="o">.</span><span class="n">initial_state</span><span class="p">)</span>
+        <span class="n">fin_state</span> <span class="o">=</span> <span class="n">sp</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">na</span><span class="p">,</span> <span class="n">dim1</span><span class="p">,</span> <span class="n">dim2</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">complex</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">index_i</span><span class="p">,</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">detunings_local</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">sing_sim</span><span class="o">.</span><span class="n">reset_state</span><span class="p">()</span>
+            <span class="n">fin_state</span><span class="p">[</span><span class="n">index_i</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">sing_sim</span><span class="o">.</span><span class="n">final_state</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">fin_state</span><span class="p">,</span> <span class="n">detunings_local</span></div></div>
+
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../index.html">Density_Matrix_Simulation 0.0.1 documentation</a> &raquo;</li>
+          <li class="nav-item nav-item-1"><a href="../index.html" >Module code</a> &raquo;</li>
+          <li class="nav-item nav-item-2"><a href="../density_matrix_classes.html" >density_matrix_classes</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &copy; Copyright 2018, Zachary Buckholtz.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.3.5.
+    </div>
+  </body>
+</html>
