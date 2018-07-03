@@ -24,7 +24,8 @@ class atom:
         :param state: The initial state of the system.  This is used in two attributes: one to 
                       save the initial state (self.initial_state) and one to update as the
                       atom evolves (self.current_state).
-        :param decay: Matrix describing the decay of the system.  A diagonal matrix where the diagonal elements are the total decoherence for that state including dephasing and population decay.
+        :param decay: Matrix describing the decay of the system.  A diagonal matrix where the diagonal elements are the
+                      total decoherence for that state including dephasing and population decay.
         :param closed: Array detailing the decay rate from each excited state to each ground state.
                        This array is used to add population back into the system, thus making it closed.
                        The (i, j)th element represents decay from the jth state to the ith state.
