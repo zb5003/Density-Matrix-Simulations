@@ -39,11 +39,12 @@ initial_state = sp.asarray([[1, 0, 0], [0, 0, 0], [0, 0, 0]], dtype=complex)
 
 gamma = 2 * sp.pi * 4800
 gamma_slow = 2 * sp.pi * 500
-decay_matrix = sp.asarray([[0, 0, 0], [0, gamma_slow, 0], [0, 0, gamma]])
+gamma_transverse = 2 * sp.pi * 1e1
+decay_matrix = sp.asarray([[0, 0, 0], [0, gamma_slow, 0], [0, 0, gamma + gamma_transverse]])
 
 decay_to = sp.asarray([[0, sp.sqrt(gamma_slow), sp.sqrt(gamma / 2)],
                        [0, 0, sp.sqrt(gamma / 2)],
-                       [0, 0, 0]])
+                       [0, 0, sp.sqrt(gamma_transverse)]])
 
 ionic_density = 9.35e24  # /m^3import
 n_151 = 800

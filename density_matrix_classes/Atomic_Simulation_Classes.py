@@ -24,7 +24,7 @@ class atom:
         :param state: The initial state of the system.  This is used in two attributes: one to 
                       save the initial state (self.initial_state) and one to update as the
                       atom evolves (self.current_state).
-        :param decay: Matrix describing the decay of the system.
+        :param decay: Matrix describing the decay of the system.  A diagonal matrix where the diagonal elements are the total decoherence for that state including dephasing and population decay.
         :param closed: Array detailing the decay rate from each excited state to each ground state.
                        This array is used to add population back into the system, thus making it closed.
                        The (i, j)th element represents decay from the jth state to the ith state.
@@ -38,7 +38,11 @@ class atom:
 
     def generate_c(self, dec_to_mat):
         """
-        Splits dec_to_mat into two lists.  One list is a list of lower operators, the other is a list of raising operators.
+        Split dec_to_mat into two lists.
+
+        One list is a list of lower operators, the other is a list of raising operators.
+        Off-diagonal elements represent transitions between states. Diagonal elements represent dephasing.
+
         See documentation for more detail.
         :param dec_to_mat: Array. Describes the decay from state j to state i.
         :return: Two lists. The first contains lower operators relevant to the decay, the other contains the relevant raising operators.
@@ -48,13 +52,13 @@ class atom:
         c = sp.zeros((dim3, dim1, dim2))
         c_T = sp.zeros((dim3, dim1, dim2))
         k = 0
-        for i in range(dim1 - 1):
-            for j in range(i + 1, dim1):
+        for i in range(dim1):
+            for j in range(i, dim1):
                 if dec_to_mat[i, j] != 0:
                     c[k, i, j] = dec_to_mat[i, j]
                     c_T[k, j, i] = dec_to_mat[i, j]
                     k = k + 1
-        # print(c, c_T)
+        print(c, c_T)
         return c, c_T
 
     def evolve_step(self,
