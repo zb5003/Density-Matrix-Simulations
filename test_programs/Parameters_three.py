@@ -39,12 +39,13 @@ initial_state = sp.asarray([[1, 0, 0], [0, 0, 0], [0, 0, 0]], dtype=complex)
 
 gamma = 2 * sp.pi * 4800
 gamma_slow = 2 * sp.pi * 500
-gamma_transverse = 2 * sp.pi * 1e1
-decay_matrix = sp.asarray([[0, 0, 0], [0, gamma_slow, 0], [0, 0, gamma + gamma_transverse]])
+gamma_transverse_3 = 2 * sp.pi * 1e7
+gamma_transverse_2 = 2 * sp.pi * 1e6
+decay_matrix = sp.asarray([[0, 0, 0], [0, gamma_slow + gamma_transverse_2, 0], [0, 0, gamma + gamma_transverse_3]])
 
 decay_to = sp.asarray([[0, sp.sqrt(gamma_slow), sp.sqrt(gamma / 2)],
-                       [0, 0, sp.sqrt(gamma / 2)],
-                       [0, 0, sp.sqrt(gamma_transverse)]])
+                       [0, sp.sqrt(gamma_transverse_2), sp.sqrt(gamma / 2)],
+                       [0, 0, sp.sqrt(gamma_transverse_3)]])
 
 ionic_density = 9.35e24  # /m^3import
 n_151 = 800
@@ -61,6 +62,7 @@ intensity_p = power_p / (2 * sp.pi * waist_p**2)
 field_amplitude_p = sp.sqrt(2 * intensity_p / (n_refraction * epsilon0 * c))
 field_amplitude_p_B = sp.sqrt(4 * mu0 * n_refraction * power_p / (c * sp.pi * waist_p**2))
 Rabi_p = 0.063 * muB * field_amplitude_p_B / hbar
+print(Rabi_p)
 
 power_c = 0.05
 waist_c = 100e-6

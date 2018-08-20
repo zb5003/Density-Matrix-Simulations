@@ -97,3 +97,4 @@ Rabi_f = a0 * e_charge * field_amplitude / hbar
 dt = 0.5e-10
 nt = 42000
 the_times = sp.linspace(0, nt * dt, nt, endpoint=False)
+print(ionic_density * (a0 * e_charge)**2 / (epsilon0 * hbar))
