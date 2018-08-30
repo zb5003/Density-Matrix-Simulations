@@ -44,11 +44,21 @@ def rho_13_full(del_om, del_om_p, dip_p, dip_c, field_p, field_c, gamma21, gamma
     """
     rabi_p = Rabi_freq(dip_p, field_p)
     rabi_c = Rabi_freq(dip_c, field_c)
-    coef = 2 * 9.35e24 * mu0 * (0.063 * muB * sp.sqrt(0.18))**2 / (hbar * rabi_p)
+    coef = 4 * 9.35e24 * mu0 * (0.063 * muB * sp.sqrt(0.18))**2 / (hbar * rabi_p)
     print(sp.sqrt(5e14 * coef * rabi_p), coef * rabi_p)
     numerator = rabi_p * (2 * del_om - 1j * gamma21)
     denominator = (4 * del_om * del_om_p - gamma21 * gamma31 - rabi_c**2) - 2 * 1j * (gamma21 * del_om_p + del_om * gamma31)
     return coef * numerator / denominator
+
+def sigmoid(x, center, turn_on_time):
+    """
+
+    :param x:
+    :param center:
+    :param turn_on_time:
+    :return:
+    """
+    return 1 / (1 + sp.exp(-(x - center) / turn_on_time))
 
 gamma = 1 / 33e-6
 gamma21 = 2e6
@@ -63,7 +73,7 @@ dip_c = 0.063 * muB * sp.sqrt(0.18)
 field_amplitude_c = sp.sqrt(4 * mu0 * n * power_c / (c * sp.pi * waist_c**2))
 print(field_amplitude_c)
 # field_amplitude_c = hbar * gamma / (dip_c * sp.sqrt(10))  #  sp.sqrt(4 * mu0 * n * power_c / (c * sp.pi * waist_c**2))
-offset_c = -1.4e6
+offset_c = 0.5e6
 
 power_p = 60e-6
 waist_p = 70e-6 / 2
@@ -71,11 +81,13 @@ intensity_p = power_p / (2 * sp.pi * waist_p**2)
 field_amplitude_p = sp.sqrt(4 * mu0 * n * power_p / (c * sp.pi * waist_p**2))
 # field_amplitude_p = sp.sqrt(2 / (n * c * epsilon0) * power_p / (sp.pi * waist_p**2))
 dip_p = 0.063 * muB * sp.sqrt(0.18)
-offset_p = -1.4e6  #offset_c + 1e6
+offset_p = -1.8e6  #offset_c + 1e6
 
 inhomogeneous = sp.linspace(-1e9, 1e9, 80000)
 
 detunings = sp.linspace(-6.4e6, 3.6e6, 21)
+sig_1 = sigmoid(detunings, -5e6, 6e5)
+sig_2 = sigmoid(-detunings, -5e6, 6e5)
 response_bare = rho_13(detunings, detunings + offset_c, dip_p, dip_c, field_amplitude_p, field_amplitude_c, gamma)
 response = sp.zeros(50000, dtype=complex)
 single_response = rho_13(-detunings + offset_c, -detunings + offset_p, dip_p, dip_c, field_amplitude_p, field_amplitude_c, gamma)
@@ -104,8 +116,9 @@ fig.subplots_adjust(hspace=0.5)
 # ax[1].plot(sp.asarray(detunings / 1e6), single_response_full.real, label="real")
 # ax.plot(sp.asarray(detunings / 1e6), single_response_full.real, label=r"$\Im[\chi(\Omega_c=$" + str(round(Rabi_freq(dip_c, field_amplitude_c) / 1e6, 1)) + " MHz)]")
 # ax.plot(sp.asarray(detunings / 1e6), single_response_full.imag, label=r"$\Im[\chi(\Omega_c=$0 MHz)]")
-ax.plot(sp.asarray(detunings / 1e6), sp.exp(-(4 * sp.pi / lambd) * ((0.25 * single_response_full_2.imag + single_response_full.imag) / (1.25 * 2)) * 0.01 / (1.6e9 / gamma31)), label=r"Transmission $\Omega_c=$" + str(round(Rabi_freq(dip_c, field_amplitude_c) / 1e6, 1)) + " MHz")
-ax.plot(sp.asarray(detunings / 1e6), sp.exp(-(4 * sp.pi / lambd) * (single_response_full_2.imag / 2) * 0.01 / (1.6e9 / gamma31)), label="Transmission $\Omega_c=$0 MHz")
+ax.plot(sp.asarray(detunings / 1e6), sig_1 * sig_2 * sp.exp(-(4 * sp.pi / lambd) * ((0.0 * single_response_full_2.imag + single_response_full.imag) / (1.0 * 2)) * 0.01 / (1.6e9 / gamma31)), label=r"Transmission $\Omega_c=$" + str(round(Rabi_freq(dip_c, field_amplitude_c) / 1e6, 1)) + " MHz", color='green')
+ax.plot(sp.asarray(detunings / 1e6), sig_1 * sig_2 * sp.exp(-(4 * sp.pi / lambd) * (single_response_full_2.imag / 2) * 0.01 / (1.6e9 / gamma31)), label="Transmission $\Omega_c=$0 MHz", color='blue')
+ax.plot(sp.asarray(detunings / 1e6), sig_1 * sig_2, color='red')
 ax.set_xlabel("Detuning (MHz)")
 ax.set_ylabel("Amplitude (arb. units)")
 ax.axhline(0, color='black', linewidth=1)
